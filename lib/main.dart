@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
 
     return new MaterialApp(
       theme: new ThemeData(
-        primaryColor: new Color(0xffff7100),
+        primaryColor: new Color(0xffff073848),
         primaryColorDark: new Color(0xff073848)
       ),
       home: new SplashScreen(

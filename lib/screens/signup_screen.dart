@@ -107,75 +107,83 @@ class _SignupScreenState extends State<SignupScreen> {
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: new Color(0xff073848),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 32.0),
-        child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 0.0),
-                child: new Center(
-                  child: new Text(
-                    "Seems like you are new to",
-                    textAlign: TextAlign.center,
-                    style: new TextStyle(
-                      color: Colors.white,
-                      fontSize: 22.0,
-                    ),
-                  ),
-                ),
-              ),
-              new Image.asset(
-                "images/brandlogowhite.png",
-                width: 500,
-                height: 150,
-              ),
-              new TextField(
-                decoration: new InputDecoration(
-                  labelText: "What do your friends call you?",
-                  labelStyle: new TextStyle(
-                    color: Colors.white,
-                  ),
-                  errorText: _showNameError? "Please enter a valid name" : null
-                ),
-                keyboardType: TextInputType.text,
-                cursorColor: new Color(0xffff7100),
-                controller: _nameController,
-                onChanged: (value) => _setNameError(false),
-              ),
-              new TextField(
-                decoration: new InputDecoration(
-                    labelText: "What is your cool email?",
-                    labelStyle: new TextStyle(
-                      color: Colors.white,
-                    ),
-                    errorText:
-                    _showEmailError ? "Please enter a valid email" : null),
-                keyboardType: TextInputType.emailAddress,
-                cursorColor: new Color(0xffff7100),
-                controller: _emailController,
-                onChanged: (value) => _setEmailError(false),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 32.0),
-                child: new RaisedButton(
-                  onPressed: _validateInputs,
-                  color: Colors.white,
-                  textColor: new Color(0xffff7100),
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: _isLoading? new CircularProgressIndicator() : new Text(
-                      "Proceed",
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 32.0),
+          child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 48.0, 16.0, 0.0),
+                  child: new Center(
+                    child: new Text(
+                      "Seems like you are new to",
+                      textAlign: TextAlign.center,
                       style: new TextStyle(
-                        fontSize: 20.0,
+                        color: Colors.white,
+                        fontSize: 22.0,
                       ),
                     ),
                   ),
                 ),
-              ),
-            ]),
+                new Image.asset(
+                  "images/brandlogowhite.png",
+                  width: 500,
+                  height: 150,
+                ),
+                new TextField(
+                  decoration: new InputDecoration(
+                    labelText: "What do your friends call you?",
+                    labelStyle: new TextStyle(
+                      color: Colors.white,
+                    ),
+                    errorText: _showNameError? "Please enter a valid name" : null
+                  ),
+                  keyboardType: TextInputType.text,
+                  cursorColor: new Color(0xffff7100),
+                  style: new TextStyle(
+                    color: Colors.white
+                  ),
+                  controller: _nameController,
+                  onChanged: (value) => _setNameError(false),
+                ),
+                new TextField(
+                  decoration: new InputDecoration(
+                      labelText: "What is your cool email?",
+                      labelStyle: new TextStyle(
+                        color: Colors.white,
+                      ),
+                      errorText:
+                      _showEmailError ? "Please enter a valid email" : null),
+                  keyboardType: TextInputType.emailAddress,
+                  cursorColor: new Color(0xffff7100),
+                  style: new TextStyle(
+                    color: Colors.white
+                  ),
+                  controller: _emailController,
+                  onChanged: (value) => _setEmailError(false),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(top: 32.0),
+                  child: new RaisedButton(
+                    onPressed: _validateInputs,
+                    color: Colors.white,
+                    textColor: new Color(0xffff7100),
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: _isLoading? new CircularProgressIndicator() : new Text(
+                        "Proceed",
+                        style: new TextStyle(
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+        ),
       )
     );
   }

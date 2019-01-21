@@ -182,76 +182,84 @@ class _LoginScreenState extends State<LoginScreen>{
   Widget build(BuildContext context) {
     return new Scaffold(
       backgroundColor: Color(0xff073848),
-      body: new Center(
-        child: new Padding(
-          padding: EdgeInsets.all(8.0),
-          child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              new Image.asset(
-                "images/brandlogowhite.png",
-                width: 600,
-                height: 200,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: new TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.number,
-                  onChanged: (value) =>_setPhoneError(false),
-                  decoration: new InputDecoration(
-                      labelText: "Enter your phone number",
-                      labelStyle: new TextStyle(
-                        color: Colors.white,
-                      ),
-                      errorText: _phoneNumberError? "Enter a valid number" : null,
-                      icon: new Icon(
-                        Icons.call,
-                        color: new Color(0xffff7100),
-                      )
+      body: SingleChildScrollView(
+        child: new Center(
+          child: new Padding(
+            padding: EdgeInsets.all(8.0),
+            child: new Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                new Image.asset(
+                  "images/brandlogowhite.png",
+                  width: 600,
+                  height: 200,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: new TextField(
+                    controller: _phoneController,
+                    keyboardType: TextInputType.number,
+                    style: new TextStyle(
+                        color: Colors.white
+                    ),
+                    onChanged: (value) =>_setPhoneError(false),
+                    decoration: new InputDecoration(
+                        labelText: "Enter your phone number",
+                        labelStyle: new TextStyle(
+                          color: Colors.white,
+                        ),
+                        errorText: _phoneNumberError? "Enter a valid number" : null,
+                        icon: new Icon(
+                          Icons.call,
+                          color: new Color(0xffff7100),
+                        )
+                    ),
                   ),
                 ),
-              ),
-              _phoneNumberEntered? Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: new TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  decoration: new InputDecoration(
-                    labelText: "Enter OTP",
-                    labelStyle: new TextStyle(
+                _phoneNumberEntered? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: new TextField(
+                    controller: _otpController,
+                    keyboardType: TextInputType.number,
+                    style: new TextStyle(
                       color: Colors.white
                     ),
-                    errorText: _otpError? "Enter a valid otp" : null,
-                    icon: new Icon(
-                      Icons.vpn_key,
-                      color: new Color(0xffff7100),
-                    )
+                    decoration: new InputDecoration(
+                      labelText: "Enter OTP",
+                      labelStyle: new TextStyle(
+                        color: Colors.white
+                      ),
+                      errorText: _otpError? "Enter a valid otp" : null,
+                      icon: new Icon(
+                        Icons.vpn_key,
+                        color: new Color(0xffff7100),
+                      )
+                    ),
+                    onChanged: (value) => _setOtpError(false),
                   ),
-                  onChanged: (value) => _setOtpError(false),
-                ),
-              ) : new Container(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 32.0),
-                child: new RaisedButton(
-                  onPressed: _phoneNumberEntered? _verifyOTP : _validatePhoneNumber,
-                  color: Colors.white,
-                  textColor: new Color(0xffff7100),
-                  shape: new RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0)
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: _isLoading ? new CircularProgressIndicator() : new Text(
-                      _buttonText,
-                      style: new TextStyle(
-                        fontSize: 20.0,
+                ) : new Container(),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 32.0),
+                  child: new RaisedButton(
+                    onPressed: _phoneNumberEntered? _verifyOTP : _validatePhoneNumber,
+                    color: Colors.white,
+                    textColor: new Color(0xffff7100),
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0)
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: _isLoading ? new CircularProgressIndicator() : new Text(
+                        _buttonText,
+                        style: new TextStyle(
+                          fontSize: 20.0,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
