@@ -8,8 +8,7 @@ class ChildHome extends StatefulWidget{
   _ChildHomeState createState() => _ChildHomeState();
 }
 
-bool _genderPreferenceGiven = false;
-String _genderText = "Proceed";
+String _serviceName = "";
 
 class _ChildHomeState extends State<ChildHome>{
 
@@ -19,7 +18,10 @@ class _ChildHomeState extends State<ChildHome>{
           if(gender.isEmpty){
             _showGenderDialog();
           } else{
-
+            setState(() {
+              _serviceName = value;
+            });
+            Navigator.push(context, MaterialPageRoute(builder: (context) => ChildServices()));
           }
         });
   }
@@ -55,15 +57,21 @@ class _ChildHomeState extends State<ChildHome>{
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
-                new Icon(
-                  Icons.arrow_forward_ios,
-                  size: 100,
-                  color: Colors.blue,
+                GestureDetector(
+                  onTap: () => savePreferences("male"),
+                  child: new Image.asset(
+                    "images/bluemale.png",
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
-                new Icon(
-                  Icons.arrow_back_ios,
-                  size: 100,
-                  color: Colors.pinkAccent,
+                GestureDetector(
+                  onTap: () => savePreferences("female"),
+                  child: new Image.asset(
+                    "images/pinkfemale.png",
+                    width: 100,
+                    height: 100,
+                  ),
                 )
               ],
             ),
@@ -80,6 +88,13 @@ class _ChildHomeState extends State<ChildHome>{
   Future<String> getGenderPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("userGender") ?? "";
+  }
+
+  Future<bool> savePreferences(gender) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("userGender", gender);
+    Navigator.pop(context);
+    return prefs.commit();
   }
 
   @override
@@ -129,7 +144,7 @@ class _ChildHomeState extends State<ChildHome>{
                   child: Column(
                     children: <Widget>[
                       GestureDetector(
-                        onTap:() => _openServicesPage("hair"),
+                        onTap:() => _openServicesPage("Hair"),
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Center(
@@ -154,7 +169,7 @@ class _ChildHomeState extends State<ChildHome>{
                   child: Column(
                     children: <Widget>[
                       GestureDetector(
-                        onTap: () => _openServicesPage("beauty"),
+                        onTap: () => _openServicesPage("Beauty"),
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Center(
@@ -184,7 +199,7 @@ class _ChildHomeState extends State<ChildHome>{
                   child: Column(
                     children: <Widget>[
                       GestureDetector(
-                        onTap: () => _openServicesPage("makeup"),
+                        onTap: () => _openServicesPage("Makeup"),
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Center(
@@ -209,7 +224,7 @@ class _ChildHomeState extends State<ChildHome>{
                   child: Column(
                     children: <Widget>[
                       GestureDetector(
-                        onTap: () =>_openServicesPage("others"),
+                        onTap: () =>_openServicesPage("Others"),
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Center(
@@ -234,4 +249,219 @@ class _ChildHomeState extends State<ChildHome>{
     );
   }
 
+}
+
+//above this line is the childhome class
+//and below this is childservice class
+
+class ChildServices extends StatefulWidget{
+  
+  @override
+  _ChildServicesState createState() => _ChildServicesState();
+}
+
+Icon _icon = new Icon(Icons.add_circle_outline);
+String _cartText = "Add to cart";
+
+class _ChildServicesState extends State<ChildServices>{
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: new Text(_serviceName + " Services"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
+        child: ListView(
+          children: <Widget>[
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Feathers",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    Text(
+                      "Hair cutting",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w200
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "200 ₹",
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w400
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                           _icon = Icon(
+                             Icons.check_circle,
+                             color: Colors.green,
+                           );
+                           _cartText = "Added";
+                        });
+                      },
+                      child: _icon),
+                    Text(
+                      _cartText,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            new Divider(),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Multi Layers",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    Text(
+                      "Hair cutting",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w200
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "250 ₹",
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    _icon,
+                    Text(
+                      _cartText,
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            new Divider(),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Steps",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    Text(
+                      "Hair cutting",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w200
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "200 ₹",
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Icon(Icons.add_circle_outline),
+                    Text(
+                      "Add to cart",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+            new Divider(),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Normal",
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w300
+                      ),
+                    ),
+                    Text(
+                      "Waxing",
+                      style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w200
+                      ),
+                    ),
+                  ],
+                ),
+                Text(
+                  "150 ₹",
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.w400
+                  ),
+                ),
+                Column(
+                  children: <Widget>[
+                    Icon(Icons.add_circle_outline),
+                    Text(
+                      "Add to cart",
+                      style: TextStyle(
+                        fontSize: 12.0,
+                      ),
+                    ),
+                  ],
+                )
+              ],
+            ),
+          ],
+        )
+      ),
+    );
+  }
 }

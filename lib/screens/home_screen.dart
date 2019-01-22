@@ -150,8 +150,17 @@ class _HomeScreenState extends State<HomeScreen> {
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
-        title: new Text("Snipped"),
-        centerTitle: true,
+        flexibleSpace: Padding(
+          padding: const EdgeInsets.only(top: 40.0),
+          child: new Image.asset(
+            "images/brandlogoappbar.png",
+            width: 100,
+            height: 40,
+          ),
+        ),
+        actions: <Widget>[
+          Icon(Icons.shopping_cart)
+        ],
       ),
       drawer: new Drawer(
         child: new ListView(
