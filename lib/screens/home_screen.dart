@@ -18,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 String _name;
 String _email;
 String _phone;
+List<String> _cartList = new List();
 
 bool _isConnectedToInternet;
 
@@ -35,7 +36,6 @@ final List<Widget> _drawerChildren = [
 ];
 
 class _HomeScreenState extends State<HomeScreen> {
-
   @override
   void initState() {
     getNamePreferences().then((value) {
@@ -56,11 +56,23 @@ class _HomeScreenState extends State<HomeScreen> {
       });
     });
 
+    getCartPreferences().then((value){
+      setState(() {
+        _cartList.clear();
+        List<String> list = value.split(",");
+        for(int i=0; i<list.length; i++){
+          if(list[i].length > 1){
+            _cartList.add(list[i]);
+          }
+        }
+      });
+    });
+
     _isConnected();
     super.initState();
   }
 
-  Future<void> _isConnected() async{
+  Future<void> _isConnected() async {
     var connectivityResult = await (new Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.mobile) {
       setState(() {
@@ -100,6 +112,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return prefs.getString("userEmail") ?? "";
   }
 
+  Future<String> getCartPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("cart") ?? "";
+  }
+
   void _logout() {
     FirebaseAuth.instance.signOut();
     savePreferences("", "", "");
@@ -107,41 +124,41 @@ class _HomeScreenState extends State<HomeScreen> {
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }
 
-  void _onDrawerTapped(value){
+  void _onDrawerTapped(value) {
     Navigator.pop(context);
-    switch(value){
-      case "home": setState(() {
+    switch (value) {
+      case "home":
+        setState(() {
           _currentIndex = 0;
         });
         break;
-      case "orders": setState(() {
+      case "orders":
+        setState(() {
           _currentIndex = 1;
         });
         break;
-      case "logout": showDialog(
-          context: context,
-          builder: (BuildContext context){
-            return new AlertDialog(
-              content: new Text(
-                  'Are you sure you want to log out?'
-              ),
-              actions: <Widget>[
-                new FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: new Text('Cancel'),
-                ),
-                new FlatButton(
-                  onPressed: () {
-                    _logout();
-                  },
-                  child: new Text('Yes'),
-                )
-              ],
-            );
-          }
-      );
+      case "logout":
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return new AlertDialog(
+                content: new Text('Are you sure you want to log out?'),
+                actions: <Widget>[
+                  new FlatButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: new Text('Cancel'),
+                  ),
+                  new FlatButton(
+                    onPressed: () {
+                      _logout();
+                    },
+                    child: new Text('Yes'),
+                  )
+                ],
+              );
+            });
     }
   }
 
@@ -159,7 +176,44 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         actions: <Widget>[
-          Icon(Icons.shopping_cart)
+          new Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: new Container(
+                height: 150.0,
+                width: 30.0,
+                child: new Stack(
+                  children: <Widget>[
+                    new IconButton(
+                      icon: new Icon(
+                        Icons.shopping_cart,
+                        color: Colors.white,
+                      ),
+                      onPressed: null,
+                    ),
+                (_cartList.isEmpty)
+                        ? new Container()
+                        : new Positioned(
+                            child: new Stack(
+                            children: <Widget>[
+                              new Icon(Icons.brightness_1,
+                                  size: 20.0, color: Color(0xffff7100)),
+                              new Positioned(
+                                  top: 4.0,
+                                  right: 5.0,
+                                  child: new Center(
+                                    child: new Text(
+                                      _cartList.length.toString(),
+                                      style: new TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 11.0,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                  )),
+                            ],
+                          )),
+                  ],
+                )),
+          )
         ],
       ),
       drawer: new Drawer(
@@ -167,8 +221,9 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: new Text((_name == null)? "Account name" : _name),
-              accountEmail: new Text((_email == null)? "Account email" : _email),
+              accountName: new Text((_name == null) ? "Account name" : _name),
+              accountEmail:
+                  new Text((_email == null) ? "Account email" : _email),
               currentAccountPicture: new CircleAvatar(
                 backgroundColor: Colors.white,
                 child: new Text((_name == null) ? "hey" : _name[0]),
@@ -180,10 +235,9 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () => _onDrawerTapped("home"),
             ),
             new ListTile(
-              title: new Text("My Orders"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("orders")
-            ),
+                title: new Text("My Orders"),
+                trailing: new Icon(Icons.arrow_forward_ios),
+                onTap: () => _onDrawerTapped("orders")),
             new Divider(),
             new ListTile(
               title: new Text("About us"),
@@ -197,10 +251,9 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             new Divider(),
             new ListTile(
-              title: new Text("Settings"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("settings")
-            ),
+                title: new Text("Settings"),
+                trailing: new Icon(Icons.arrow_forward_ios),
+                onTap: () => _onDrawerTapped("settings")),
             new ListTile(
               title: new Text("Log out"),
               trailing: new Icon(Icons.arrow_forward_ios),
@@ -213,26 +266,28 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      body: _isConnectedToInternet? _drawerChildren[_currentIndex] : new Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new Text(
-              "Seems like you are low on network! Please connect to internet and try again!",
-              textAlign: TextAlign.center,
+      body: _isConnectedToInternet
+          ? _drawerChildren[_currentIndex]
+          : new Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: new Text(
+                    "Seems like you are low on network! Please connect to internet and try again!",
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                new RaisedButton(
+                  onPressed: _isConnected,
+                  color: Color(0xffff073848),
+                  textColor: Colors.white,
+                  elevation: 5.0,
+                  child: new Text("Try again"),
+                )
+              ],
             ),
-          ),
-          new RaisedButton(
-            onPressed: _isConnected,
-            color: Color(0xffff073848),
-            textColor: Colors.white,
-            elevation: 5.0,
-            child: new Text("Try again"),
-          )
-        ],
-      ),
     );
   }
 }

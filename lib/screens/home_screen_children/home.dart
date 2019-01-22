@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snipped/screens/home_screen.dart';
+
+//imports for childService;
+import 'package:snipped/models/Service.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class ChildHome extends StatefulWidget{
 
@@ -260,208 +266,363 @@ class ChildServices extends StatefulWidget{
   _ChildServicesState createState() => _ChildServicesState();
 }
 
-Icon _icon = new Icon(Icons.add_circle_outline);
-String _cartText = "Add to cart";
+Icon _iconAddToCart = new Icon(
+  Icons.add_circle_outline,
+);
+Text _textAddToCart = Text(
+  "Add to cart",
+  style: TextStyle(
+    fontSize: 12.0,
+  ),
+);
+Icon _iconAddedToCart = new Icon(
+  Icons.check_circle,
+  color: Colors.green,
+);
+Text _textAddedToCart = Text(
+  "Added to cart",
+  style: TextStyle(
+
+    fontSize: 12.0,
+    color: Colors.green
+  ),
+);
+
+List<String> cart = new List();
+String _cartPrefString = "";
+
+Future<Response> _getServicesList() async{
+  String url =
+      "http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/service/" + _serviceName.toLowerCase();
+
+  var data = await http.get(url);
+
+  return Response.fromJson(json.decode(data.body));
+}
+
+//value is the id of the service to be removed
+//flag=0 means remove the service
+//flag=1 means add the service
+_updateCartSharedPref(value, flag){
+  _cartPrefString = "";
+  for(int i=0; i<cart.length; i++){
+    _cartPrefString = _cartPrefString + cart[i] + ",";
+  }
+  saveCartPreferences(_cartPrefString);
+}
+
+Future<bool> saveCartPreferences(value) async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  prefs.setString("cart", value);
+  return prefs.commit();
+}
+
+Future<String> getCartPreferences() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  return prefs.getString("cart") ?? "";
+}
 
 class _ChildServicesState extends State<ChildServices>{
+
+  @override
+  void initState() {
+    getCartPreferences()
+      .then((value){
+        cart = value.split(",");
+    });
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: new Text(_serviceName + " Services"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
-        child: ListView(
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Feathers",
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w300
-                      ),
-                    ),
-                    Text(
-                      "Hair cutting",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w200
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "200 ₹",
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w400
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {
-                        setState(() {
-                           _icon = Icon(
-                             Icons.check_circle,
-                             color: Colors.green,
-                           );
-                           _cartText = "Added";
-                        });
-                      },
-                      child: _icon),
-                    Text(
-                      _cartText,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
-                )
-              ],
+    return WillPopScope(
+      onWillPop: (){
+        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: new Text(_serviceName + " Services"),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
+          child: Center(
+            child: FutureBuilder(
+              future: _getServicesList(),
+              builder: (BuildContext context, AsyncSnapshot snapshot){
+                if(snapshot.hasData){
+                  return new ListView.builder(
+                    itemCount: snapshot.data.services.length,
+                    itemBuilder: (BuildContext context, int index){
+                      return Column(
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 4.0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    Text(
+                                      snapshot.data.services[index].name,
+                                      style: TextStyle(
+                                          fontSize: 20.0,
+                                          fontWeight: FontWeight.w300
+                                      ),
+                                    ),
+                                    Text(
+                                      snapshot.data.services[index].subcategory,
+                                      style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w200
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  "₹" + " "  + snapshot.data.services[index].price.toString(),
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                    fontWeight: FontWeight.w400
+                                  ),
+                                  textAlign: TextAlign.right,
+                                ),
+                                Column(
+                                  children: <Widget>[
+                                    GestureDetector(
+                                      onTap: (){
+                                        setState(() {
+                                          if(cart.contains(snapshot.data.services[index].id)){
+                                            cart.remove(snapshot.data.services[index].id);
+                                            //0 means remove this id from cart shared prefs
+                                            _updateCartSharedPref(snapshot.data.services[index].id, 0);
+                                          } else {
+                                            cart.add(snapshot.data.services[index].id);
+                                            //1 means add this id to cart shared prefs
+                                            _updateCartSharedPref(snapshot.data.services[index].id, 1);
+                                          }
+                                        });
+                                      },
+                                      child: (cart.contains(snapshot.data.services[index].id))?
+                                        _iconAddedToCart : _iconAddToCart
+                                    ),
+                                    (cart.contains(snapshot.data.services[index].id))?
+                                    _textAddedToCart : _textAddToCart
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                          new Divider()
+                        ],
+                      );
+                    },
+                  );
+                } else if(snapshot.hasError){
+                  return new Center(
+                    child: new Text('Error: ${snapshot.error}'),
+                  );
+                }
+                return new CircularProgressIndicator(
+                  valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100))
+                );
+              },
             ),
-            new Divider(),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Multi Layers",
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w300
-                      ),
-                    ),
-                    Text(
-                      "Hair cutting",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w200
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "250 ₹",
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    _icon,
-                    Text(
-                      _cartText,
-                      style: TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            new Divider(),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Steps",
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w300
-                      ),
-                    ),
-                    Text(
-                      "Hair cutting",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w200
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "200 ₹",
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Icon(Icons.add_circle_outline),
-                    Text(
-                      "Add to cart",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-            new Divider(),
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Normal",
-                      style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w300
-                      ),
-                    ),
-                    Text(
-                      "Waxing",
-                      style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w200
-                      ),
-                    ),
-                  ],
-                ),
-                Text(
-                  "150 ₹",
-                  style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400
-                  ),
-                ),
-                Column(
-                  children: <Widget>[
-                    Icon(Icons.add_circle_outline),
-                    Text(
-                      "Add to cart",
-                      style: TextStyle(
-                        fontSize: 12.0,
-                      ),
-                    ),
-                  ],
-                )
-              ],
-            ),
-          ],
-        )
+          )
+        ),
       ),
     );
   }
 }
+
+/*
+ListView(
+children: <Widget>[
+Row(
+mainAxisSize: MainAxisSize.max,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: <Widget>[
+Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: <Widget>[
+Text(
+"Feathers",
+style: TextStyle(
+fontSize: 20.0,
+fontWeight: FontWeight.w300
+),
+),
+Text(
+"Hair cutting",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w200
+),
+),
+],
+),
+Text(
+"200 ₹",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w400
+),
+),
+Column(
+children: <Widget>[
+GestureDetector(
+onTap: () {
+setState(() {
+_icon = Icon(
+Icons.check_circle,
+color: Colors.green,
+);
+_cartText = "Added";
+});
+},
+child: _icon),
+Text(
+_cartText,
+style: TextStyle(
+fontSize: 12.0,
+),
+),
+],
+)
+],
+),
+new Divider(),
+Row(
+mainAxisSize: MainAxisSize.max,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: <Widget>[
+Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: <Widget>[
+Text(
+"Multi Layers",
+style: TextStyle(
+fontSize: 20.0,
+fontWeight: FontWeight.w300
+),
+),
+Text(
+"Hair cutting",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w200
+),
+),
+],
+),
+Text(
+"250 ₹",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w400
+),
+),
+Column(
+children: <Widget>[
+_icon,
+Text(
+_cartText,
+style: TextStyle(
+fontSize: 12.0,
+),
+),
+],
+)
+],
+),
+new Divider(),
+Row(
+mainAxisSize: MainAxisSize.max,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: <Widget>[
+Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: <Widget>[
+Text(
+"Steps",
+style: TextStyle(
+fontSize: 20.0,
+fontWeight: FontWeight.w300
+),
+),
+Text(
+"Hair cutting",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w200
+),
+),
+],
+),
+Text(
+"200 ₹",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w400
+),
+),
+Column(
+children: <Widget>[
+Icon(Icons.add_circle_outline),
+Text(
+"Add to cart",
+style: TextStyle(
+fontSize: 12.0,
+),
+),
+],
+)
+],
+),
+new Divider(),
+Row(
+mainAxisSize: MainAxisSize.max,
+mainAxisAlignment: MainAxisAlignment.spaceBetween,
+children: <Widget>[
+Column(
+crossAxisAlignment: CrossAxisAlignment.start,
+children: <Widget>[
+Text(
+"Normal",
+style: TextStyle(
+fontSize: 20.0,
+fontWeight: FontWeight.w300
+),
+),
+Text(
+"Waxing",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w200
+),
+),
+],
+),
+Text(
+"150 ₹",
+style: TextStyle(
+fontSize: 16.0,
+fontWeight: FontWeight.w400
+),
+),
+Column(
+children: <Widget>[
+Icon(Icons.add_circle_outline),
+Text(
+"Add to cart",
+style: TextStyle(
+fontSize: 12.0,
+),
+),
+],
+)
+],
+),
+],
+)*/
