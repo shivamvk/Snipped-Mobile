@@ -15,6 +15,8 @@ class CartScreen extends StatefulWidget {
 List<String> _cartList = new List();
 String _cartPrefString;
 String _proceedBtnText = "";
+final _couponController = new TextEditingController();
+int _total = 0;
 
 Future<String> getCartPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -57,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
           return new Container(
             color: Colors.grey[300],
             height: MediaQuery.of(context).size.height * 0.75,
-            child: new AddressBottomSheet(),
+            child: new AddressBottomSheet(_total),
           );
         }
     ) .closed
@@ -84,8 +86,10 @@ class _CartScreenState extends State<CartScreen> {
       total += list[i].price;
     }
     setState(() {
+      _total = total;
       _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
     });
+    list.add(Service());
     list.add(Service());
     return list;
   }
@@ -98,6 +102,7 @@ class _CartScreenState extends State<CartScreen> {
       }
     }
     setState(() {
+      _total = total;
       _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
     });
   }
@@ -121,6 +126,22 @@ class _CartScreenState extends State<CartScreen> {
     return prefs.commit();
   }
 
+  _validateCouponCode(){
+    String string = _couponController.text.toLowerCase();
+    if(string == "new50"){
+      int total = _total;
+      if(total/2 <= 100){
+        total = total - (total/2).toInt();
+      } else{
+        total = total - 100;
+      }
+      setState(() {
+        _total = total;
+        _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -132,6 +153,7 @@ class _CartScreenState extends State<CartScreen> {
             key: _scaffoldKey,
             appBar: AppBar(
               title: Text("Cart"),
+              centerTitle: true,
               leading: IconButton(
                 icon: Icon(Icons.arrow_back_ios),
                 color: Colors.white,
@@ -172,9 +194,9 @@ class _CartScreenState extends State<CartScreen> {
                             (BuildContext context, AsyncSnapshot snapshot) {
                           if (snapshot.hasData) {
                             return ListView.builder(
-                              itemCount: _cartList.length + 1,
+                              itemCount: _cartList.length + 2,
                               itemBuilder: (BuildContext context, int index) {
-                                if (index == _cartList.length) {
+                                if (index == _cartList.length + 1) {
                                   return Padding(
                                     padding: const EdgeInsets.fromLTRB(
                                         8.0, 24.0, 8.0, 16.0),
@@ -193,6 +215,26 @@ class _CartScreenState extends State<CartScreen> {
                                               fontWeight: FontWeight.w400),
                                         ),
                                       ),
+                                    ),
+                                  );
+                                } else if(index == _cartList.length){
+                                  return Padding(
+                                    padding: EdgeInsets.all(8.0),
+                                    child: TextField(
+                                      decoration: InputDecoration(
+                                        labelText: "Have a coupon code?",
+                                        border: OutlineInputBorder(),
+                                        suffix: GestureDetector(
+                                          onTap: () => _validateCouponCode(),
+                                          child: Icon(
+                                            Icons.send,
+                                            color: Colors.green,
+                                          ),
+                                        )
+                                      ),
+                                      cursorColor: Color(0xffff7100),
+                                      textCapitalization: TextCapitalization.characters,
+                                      controller: _couponController,
                                     ),
                                   );
                                 }

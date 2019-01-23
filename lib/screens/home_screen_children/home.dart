@@ -346,6 +346,7 @@ class _ChildServicesState extends State<ChildServices>{
       child: Scaffold(
         appBar: AppBar(
           title: new Text(_serviceName + " Services"),
+          centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
             color: Colors.white,

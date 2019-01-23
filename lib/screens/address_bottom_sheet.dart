@@ -1,6 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 class AddressBottomSheet extends StatefulWidget{
+
+  final int totalValue;
+
+  AddressBottomSheet(this.totalValue);
 
   @override
   _AddressBottomSheetState createState() => _AddressBottomSheetState();
@@ -15,6 +23,11 @@ final _pinCodeController = new TextEditingController();
 final _flatController = new TextEditingController();
 final _colonyController = new TextEditingController();
 final _cityController = new TextEditingController();
+
+String _proceedBtnText;
+
+final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+
 
 class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
@@ -58,8 +71,48 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       return;
     }
 
-    
+    FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+    firebaseMessaging.subscribeToTopic("order_placed");
+    firebaseMessaging.configure(
+      onMessage: (data){
+        print("on message called ${(data['notification'])}");
+        _showNotification();
+      }
+    );
+    sendNotification()
+      .then((bool){
+        firebaseMessaging.unsubscribeFromTopic("order_placed");
+      });
 
+  }
+
+  Future<bool> sendNotification() async{
+
+    var data = await http.get("http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/order_placed");
+    return true;
+  }
+
+  _showNotification() async{
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        '0', 'Micellaneous', 'General notifications',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await localNotificationsPlugin.show(
+        0, "Thanks for ordering!",
+        "Your order has been placed succesfully. Your service will arrive shortly." , platformChannelSpecifics);
+  }
+
+  @override
+  void initState() {
+    _proceedBtnText = "Place your order ( ₹ " + widget.totalValue.toString() + " )";
+    var initializationSettingsAndroid = new AndroidInitializationSettings('launch_background');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    localNotificationsPlugin.initialize(initializationSettings);
+    super.initState();
   }
 
   @override
@@ -177,7 +230,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
                   child: Text(
-                    "Proceed to payment",
+                    _proceedBtnText,
                     style: TextStyle(
                       fontSize: 16.0,
                       fontWeight: FontWeight.w400

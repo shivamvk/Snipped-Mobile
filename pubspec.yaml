@@ -27,6 +27,7 @@ dependencies:
   transparent_image: ^0.1.0
   cached_network_image: ^0.5.1
   firebase_messaging: ^2.1.0
+  flutter_local_notifications: ^0.4.4+2
 
 
 

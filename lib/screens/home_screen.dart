@@ -4,11 +4,14 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:convert';
 
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
 import 'home_screen_children/orders.dart';
 import 'cart_screen.dart';
+import 'package:snipped/models/Notification.dart';
 //The homeScreen for the app.
 
 class HomeScreen extends StatefulWidget {
@@ -26,6 +29,7 @@ bool _isConnectedToInternet;
 var _currentIndex = 0;
 
 final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
 final List<Widget> _drawerChildren = [
   new Container(
@@ -38,13 +42,32 @@ final List<Widget> _drawerChildren = [
   )
 ];
 
+String _notificationTitle;
+String _notificationText;
+
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
 
+    var initializationSettingsAndroid = new AndroidInitializationSettings('launch_background');
+    var initializationSettingsIOS = new IOSInitializationSettings();
+    var initializationSettings = new InitializationSettings(
+        initializationSettingsAndroid, initializationSettingsIOS);
+    localNotificationsPlugin.initialize(initializationSettings);
+
     _firebaseMessaging.requestNotificationPermissions();
 
-    _firebaseMessaging.configure();
+    _firebaseMessaging.configure(
+      onMessage: (notification){
+        setState(() {
+          print("on message called ${(notification['notification'])}");
+          String string = notification['notification'].toString();
+          _notificationTitle = string.substring(8, 33);
+          _notificationText = string.substring(40, 110);
+        });
+        _showNotification();
+      }
+    );
 
     getNamePreferences().then((value) {
       setState(() {
@@ -78,6 +101,18 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _isConnected();
     super.initState();
+  }
+
+  _showNotification() async{
+    var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+        '0', 'Micellaneous', 'General notifications',
+        importance: Importance.Max, priority: Priority.High);
+    var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    var platformChannelSpecifics = new NotificationDetails(
+        androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    await localNotificationsPlugin.show(
+        0, _notificationTitle,
+        _notificationText , platformChannelSpecifics);
   }
 
   Future<void> _isConnected() async {
@@ -253,20 +288,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => _onDrawerTapped("orders")),
             new Divider(),
             new ListTile(
-              title: new Text("About us"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("about"),
-            ),
-            new ListTile(
-              title: new Text("Contact us"),
+              title: new Text("Help and support"),
               trailing: new Icon(Icons.arrow_forward_ios),
               onTap: () => _onDrawerTapped("contact"),
             ),
-            new Divider(),
-            new ListTile(
-                title: new Text("Settings"),
-                trailing: new Icon(Icons.arrow_forward_ios),
-                onTap: () => _onDrawerTapped("settings")),
             new ListTile(
               title: new Text("Log out"),
               trailing: new Icon(Icons.arrow_forward_ios),
