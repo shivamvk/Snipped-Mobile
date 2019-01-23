@@ -26,6 +26,7 @@ dependencies:
   connectivity: ^0.3.2
   transparent_image: ^0.1.0
   cached_network_image: ^0.5.1
+  firebase_messaging: ^2.1.0
 
 
 

@@ -19,9 +19,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return new MaterialApp(
+      title: "Snipped",
       theme: new ThemeData(
         primaryColor: new Color(0xffff073848),
-        primaryColorDark: new Color(0xff073848)
+        primaryColorDark: new Color(0xff073848),
       ),
       debugShowCheckedModeBanner: false,
       home: new SplashScreen(

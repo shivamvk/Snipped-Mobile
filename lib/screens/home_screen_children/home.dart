@@ -22,17 +22,17 @@ class _ChildHomeState extends State<ChildHome>{
     getGenderPreferences()
         .then((gender){
           if(gender.isEmpty){
-            _showGenderDialog();
+            _showGenderDialog(value);
           } else{
             setState(() {
               _serviceName = value;
             });
-            Navigator.push(context, MaterialPageRoute(builder: (context) => ChildServices()));
+            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChildServices()));
           }
         });
   }
 
-  _showGenderDialog(){
+  _showGenderDialog(value){
     AlertDialog _genderDialog = new AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
       contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
@@ -64,7 +64,7 @@ class _ChildHomeState extends State<ChildHome>{
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 GestureDetector(
-                  onTap: () => savePreferences("male"),
+                  onTap: () => savePreferences("male", value),
                   child: new Image.asset(
                     "images/bluemale.png",
                     width: 100,
@@ -72,7 +72,7 @@ class _ChildHomeState extends State<ChildHome>{
                   ),
                 ),
                 GestureDetector(
-                  onTap: () => savePreferences("female"),
+                  onTap: () => savePreferences("female", value),
                   child: new Image.asset(
                     "images/pinkfemale.png",
                     width: 100,
@@ -96,10 +96,14 @@ class _ChildHomeState extends State<ChildHome>{
     return prefs.getString("userGender") ?? "";
   }
 
-  Future<bool> savePreferences(gender) async {
+  Future<bool> savePreferences(gender, value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("userGender", gender);
     Navigator.pop(context);
+    setState(() {
+      _serviceName = value;
+    });
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChildServices()));
     return prefs.commit();
   }
 
@@ -342,6 +346,13 @@ class _ChildServicesState extends State<ChildServices>{
       child: Scaffold(
         appBar: AppBar(
           title: new Text(_serviceName + " Services"),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios),
+            color: Colors.white,
+            onPressed: (){
+              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+            },
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
@@ -380,15 +391,8 @@ class _ChildServicesState extends State<ChildServices>{
                                     ),
                                   ],
                                 ),
-                                Text(
-                                  "₹" + " "  + snapshot.data.services[index].price.toString(),
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    fontWeight: FontWeight.w400
-                                  ),
-                                  textAlign: TextAlign.right,
-                                ),
                                 Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: <Widget>[
                                     GestureDetector(
                                       onTap: (){
@@ -404,8 +408,23 @@ class _ChildServicesState extends State<ChildServices>{
                                           }
                                         });
                                       },
-                                      child: (cart.contains(snapshot.data.services[index].id))?
-                                        _iconAddedToCart : _iconAddToCart
+                                      child: Row(
+                                        children: <Widget>[
+                                          Padding(
+                                            padding: const EdgeInsets.only(right: 4.0),
+                                            child: Text(
+                                              "₹" + " "  + snapshot.data.services[index].price.toString(),
+                                              style: TextStyle(
+                                                  fontSize: 14.0,
+                                                  fontWeight: FontWeight.w400
+                                              ),
+                                              textAlign: TextAlign.right,
+                                            ),
+                                          ),
+                                          (cart.contains(snapshot.data.services[index].id))?
+                                            _iconAddedToCart : _iconAddToCart,
+                                        ],
+                                      )
                                     ),
                                     (cart.contains(snapshot.data.services[index].id))?
                                     _textAddedToCart : _textAddToCart

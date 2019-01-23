@@ -32,13 +32,15 @@ class Service{
   final int price;
   final String name;
   final String id;
+  final String gender;
 
   Service({
     this.id,
     this.name,
     this.price,
     this.category,
-    this.subcategory
+    this.subcategory,
+    this.gender
   });
 
   factory Service.fromJson(Map<String, dynamic> parsedJson){
@@ -47,7 +49,8 @@ class Service{
       name: parsedJson['name'],
       price: parsedJson['price'],
       category: parsedJson['category'],
-      subcategory: parsedJson['subcategory']
+      subcategory: parsedJson['subcategory'],
+      gender: parsedJson['gender']
     );
   }
 

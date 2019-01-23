@@ -3,11 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
 import 'home_screen_children/orders.dart';
+import 'cart_screen.dart';
 //The homeScreen for the app.
 
 class HomeScreen extends StatefulWidget {
@@ -24,6 +25,8 @@ bool _isConnectedToInternet;
 
 var _currentIndex = 0;
 
+final FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+
 final List<Widget> _drawerChildren = [
   new Container(
     color: Colors.white,
@@ -38,6 +41,11 @@ final List<Widget> _drawerChildren = [
 class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
+
+    _firebaseMessaging.requestNotificationPermissions();
+
+    _firebaseMessaging.configure();
+
     getNamePreferences().then((value) {
       setState(() {
         _name = value;
@@ -188,7 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icons.shopping_cart,
                         color: Colors.white,
                       ),
-                      onPressed: null,
+                      onPressed: (){
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(builder: (context) => CartScreen())
+                        );
+                      }
                     ),
                 (_cartList.isEmpty)
                         ? new Container()
