@@ -297,7 +297,7 @@ String _cartPrefString = "";
 
 Future<Response> _getServicesList() async{
   String url =
-      "http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/service/" + _serviceName.toLowerCase();
+      "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/service/" + _serviceName.toLowerCase();
 
   var data = await http.get(url);
 

@@ -59,7 +59,7 @@ class _CartScreenState extends State<CartScreen> {
           return new Container(
             color: Colors.grey[300],
             height: MediaQuery.of(context).size.height * 0.75,
-            child: new AddressBottomSheet(_total),
+            child: new AddressBottomSheet(_total, _cartList),
           );
         }
     ) .closed
@@ -74,7 +74,7 @@ class _CartScreenState extends State<CartScreen> {
 
   Future<List<Service>> _getCartItemsById() async {
     String url =
-        "http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/service/id/" +
+        "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/service/id/" +
             _cartPrefString;
     var data = await http.get(url);
 

@@ -85,7 +85,7 @@ class _LoginScreenState extends State<LoginScreen>{
   }
 
   Future<void> checkIfUserAlreadyExists(phone) async{
-    final data = await http.get("http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/number_exists?phone=" + phone);
+    final data = await http.get("http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/number_exists?phone=" + phone);
 
     //snapshot.data == "true" means user already exists
     //and hence proceed to the homeScreen
@@ -104,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen>{
   }
 
   Future<void> getUserDetails(phone) async{
-    String url = "http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/user/" + phone;
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/user/" + phone;
     var data = await http.get(url);
     var jsonData = json.decode(data.body);
     Response response =  Response.fromJson(jsonData);

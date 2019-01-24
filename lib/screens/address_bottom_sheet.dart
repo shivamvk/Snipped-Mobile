@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
+import 'order_placed_screen.dart';
+
 class AddressBottomSheet extends StatefulWidget{
 
   final int totalValue;
+  final List<String> cartList;
 
-  AddressBottomSheet(this.totalValue);
+  AddressBottomSheet(this.totalValue, this.cartList);
 
   @override
   _AddressBottomSheetState createState() => _AddressBottomSheetState();
@@ -111,13 +115,41 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
     _showNotification();
 
+    _clearCart();
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => OrderPlacedScreen(
+          widget.totalValue,
+          widget.cartList,
+          "5447800add45ad",
+          _date,
+          _time,
+          pincode,
+          flat,
+          colony,
+          city
+        )
+      )
+    );
+
+  }
+
+  _clearCart(){
+    savePreferences("");
+  }
+
+  Future<bool> savePreferences(cart) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();;
+    prefs.setString("cart", cart);
+    return prefs.commit();
   }
 
   bool _validateTime(){
     if(_time.hour < 11){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service before 11";
+        _timeErrorText = "We currently don't service before 11!";
       });
       return false;
     }
@@ -125,7 +157,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       if(_time.minute != 0){
         setState(() {
           _timeError = true;
-          _timeErrorText = "We currently don't service after 7";
+          _timeErrorText = "We currently don't service after 7!";
         });
         return false;
       }
@@ -133,7 +165,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     if(_time.hour > 19){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service after 7";
+        _timeErrorText = "We currently don't service after 7!";
       });
       return false;
     }
