@@ -3,6 +3,8 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class AddressBottomSheet extends StatefulWidget{
 
@@ -18,11 +20,15 @@ bool _pinCodeError = false;
 bool _flatError = false;
 bool _colonyError = false;
 bool _cityError = false;
+bool _dateError = false;
+bool _timeError = false;
 
 final _pinCodeController = new TextEditingController();
 final _flatController = new TextEditingController();
 final _colonyController = new TextEditingController();
 final _cityController = new TextEditingController();
+final _dateController = new TextEditingController();
+final _timeController = new TextEditingController();
 
 String _proceedBtnText;
 
@@ -71,25 +77,8 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       return;
     }
 
-    FirebaseMessaging firebaseMessaging = FirebaseMessaging();
-    firebaseMessaging.subscribeToTopic("order_placed");
-    firebaseMessaging.configure(
-      onMessage: (data){
-        print("on message called ${(data['notification'])}");
-        _showNotification();
-      }
-    );
-    sendNotification()
-      .then((bool){
-        firebaseMessaging.unsubscribeFromTopic("order_placed");
-      });
+    _showNotification();
 
-  }
-
-  Future<bool> sendNotification() async{
-
-    var data = await http.get("http://13.251.185.41:8080/Snipped-0.0.1-SNAPSHOT/order_placed");
-    return true;
   }
 
   _showNotification() async{
@@ -101,13 +90,13 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
         androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
     await localNotificationsPlugin.show(
         0, "Thanks for ordering!",
-        "Your order has been placed succesfully. Your service will arrive shortly." , platformChannelSpecifics);
+        "Your order has been placed succesfully." , platformChannelSpecifics);
   }
 
   @override
   void initState() {
     _proceedBtnText = "Place your order ( ₹ " + widget.totalValue.toString() + " )";
-    var initializationSettingsAndroid = new AndroidInitializationSettings('launch_background');
+    var initializationSettingsAndroid = new AndroidInitializationSettings('brandlogoscissors');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -218,6 +207,33 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                   _cityError = false;
                 });
               },
+            ),
+            DateTimePickerFormField(
+              format: DateFormat("dd-MM-yyyy"),
+              inputType: InputType.date,
+              editable: false,
+              decoration: InputDecoration(
+                labelText: "Apoointment date",
+                labelStyle: new TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w300,
+                ),
+                errorText: _dateError? "Advanced booking of only 2 days allowed!" : null
+              ),
+              controller: _dateController,
+            ),
+            DateTimePickerFormField(
+              format: DateFormat("HH:mm"),
+              inputType: InputType.time,
+              editable: false,
+              decoration: InputDecoration(
+                labelText: "Appointment time",
+                labelStyle: new TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.w300,
+                ),
+                errorText: _timeError? "Time needs to be between 11:00 and 19:00!" : null
+              ),
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
