@@ -15,7 +15,10 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="Snipped"
-        android:icon="@drawable/brandlogoscissors">
+        android:icon="@drawable/scissorslauncher">
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/brandlogonotification" />
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

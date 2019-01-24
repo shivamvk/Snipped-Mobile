@@ -56,6 +56,8 @@ class _HomeScreenState extends State<HomeScreen> {
     localNotificationsPlugin.initialize(initializationSettings);
 
     _firebaseMessaging.requestNotificationPermissions();
+    _firebaseMessaging.subscribeToTopic("offers");
+    _firebaseMessaging.subscribeToTopic("miscellaneous");
 
     _firebaseMessaging.configure(
       onMessage: (notification){
@@ -132,11 +134,12 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Future<bool> savePreferences(name, email, phone) async {
+  Future<bool> savePreferences(name, email, phone, cart) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString("userName", name);
     prefs.setString("userEmail", email);
     prefs.setString("userPhone", phone);
+    prefs.setString("cart", cart);
     return prefs.commit();
   }
 
@@ -162,7 +165,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _logout() {
     FirebaseAuth.instance.signOut();
-    savePreferences("", "", "");
+    savePreferences("", "", "", "");
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
   }

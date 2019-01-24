@@ -30,6 +30,11 @@ final _cityController = new TextEditingController();
 final _dateController = new TextEditingController();
 final _timeController = new TextEditingController();
 
+var _date;
+var _time;
+
+String _dateErrorText = "This field is required!";
+String _timeErrorText = "This field is required!";
 String _proceedBtnText;
 
 final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
@@ -42,6 +47,8 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     String flat = _flatController.text;
     String colony = _colonyController.text;
     String city = _cityController.text;
+    String date = _dateController.text;
+    String time = _timeController.text;
 
     if(pincode.isEmpty){
       setState(() {
@@ -54,6 +61,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       setState(() {
         _pinCodeError = true;
       });
+      return;
     }
 
     if(flat.isEmpty){
@@ -77,8 +85,92 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       return;
     }
 
+    if(date.isEmpty){
+      setState(() {
+        _dateError = true;
+        _dateErrorText = "This field is required!";
+      });
+      return;
+    }
+
+    if(time.isEmpty){
+      setState(() {
+        _timeError = true;
+        _timeErrorText = "This field is required!";
+      });
+      return;
+    }
+
+    if(!_validateDate()){
+      return;
+    }
+
+    if(!_validateTime()){
+      return;
+    }
+
     _showNotification();
 
+  }
+
+  bool _validateTime(){
+    if(_time.hour < 11){
+      setState(() {
+        _timeError = true;
+        _timeErrorText = "We currently don't service before 11";
+      });
+      return false;
+    }
+    if(_time.hour == 19){
+      if(_time.minute != 0){
+        setState(() {
+          _timeError = true;
+          _timeErrorText = "We currently don't service after 7";
+        });
+        return false;
+      }
+    }
+    if(_time.hour > 19){
+      setState(() {
+        _timeError = true;
+        _timeErrorText = "We currently don't service after 7";
+      });
+      return false;
+    }
+    var currentdate = DateTime.now();
+    if(currentdate.day == _date.day && currentdate.month == _date.month && currentdate.year == _date.year){
+      if(currentdate.hour > _time.hour){
+        setState(() {
+          _timeError = true;
+          _timeErrorText = "We wish we could've served you in the past!";
+        });
+        return false;
+      }
+    }
+    return true;
+  }
+
+  bool _validateDate(){
+    var currentDate = DateTime.now();
+    var twoDaysFromNow = currentDate.add(Duration(days: 2));
+    if(currentDate.day == _date.day && currentDate.month == _date.month && currentDate.year == _date.year){
+      return true;
+    }
+    if(_date.isBefore(currentDate)){
+      setState(() {
+        _dateError = true;
+        _dateErrorText = "We wish we could've served you in the past!";
+      });
+      return false;
+    }
+    if(_date.isAfter(twoDaysFromNow)){
+      setState(() {
+        _dateError = true;
+        _dateErrorText = "Advanced booking allowed only before 2 days of service!";
+      });
+      return false;
+    }
+    return true;
   }
 
   _showNotification() async{
@@ -95,8 +187,8 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
   @override
   void initState() {
-    _proceedBtnText = "Place your order ( ₹ " + widget.totalValue.toString() + " )";
-    var initializationSettingsAndroid = new AndroidInitializationSettings('brandlogoscissors');
+    _proceedBtnText = "Confirm your order ( ₹ " + widget.totalValue.toString() + " )";
+    var initializationSettingsAndroid = new AndroidInitializationSettings('brandlogonotification');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -218,8 +310,14 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                   color: Colors.black,
                   fontWeight: FontWeight.w300,
                 ),
-                errorText: _dateError? "Advanced booking of only 2 days allowed!" : null
+                errorText: _dateError? _dateErrorText : null
               ),
+              onChanged: (value){
+                setState(() {
+                  _dateError = false;
+                });
+                _date = value;
+              },
               controller: _dateController,
             ),
             DateTimePickerFormField(
@@ -232,8 +330,15 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                   color: Colors.black,
                   fontWeight: FontWeight.w300,
                 ),
-                errorText: _timeError? "Time needs to be between 11:00 and 19:00!" : null
+                errorText: _timeError? _timeErrorText : null
               ),
+              onChanged: (value){
+                setState(() {
+                  _timeError = false;
+                });
+                _time = value;
+              },
+              controller: _timeController,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16.0),
