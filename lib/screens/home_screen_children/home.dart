@@ -8,6 +8,8 @@ import 'package:snipped/models/Service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:snipped/screens/cart_screen.dart';
+
 class ChildHome extends StatefulWidget{
 
   @override
@@ -19,17 +21,7 @@ String _serviceName = "";
 class _ChildHomeState extends State<ChildHome>{
 
   _openServicesPage(value){
-    getGenderPreferences()
-        .then((gender){
-          if(gender.isEmpty){
-            _showGenderDialog(value);
-          } else{
-            setState(() {
-              _serviceName = value;
-            });
-            Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChildServices()));
-          }
-        });
+    _showGenderDialog(value);
   }
 
   _showGenderDialog(value){
@@ -356,9 +348,173 @@ class _ChildServicesState extends State<ChildServices>{
           ),
         ),
         body: Padding(
-          padding: const EdgeInsets.only(top: 32.0, left: 16.0, right: 16.0),
-          child: Center(
-            child: FutureBuilder(
+            padding: const EdgeInsets.only(top: 0.0),
+            child: Center(
+              child: Column(
+                children: <Widget>[
+                  Expanded(
+                    flex: 13,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
+                      child: Center(
+                        child: FutureBuilder(
+                          future: _getServicesList(),
+                          builder: (BuildContext context, AsyncSnapshot snapshot){
+                            if(snapshot.hasData){
+                              return new ListView.builder(
+                                itemCount: snapshot.data.services.length,
+                                itemBuilder: (BuildContext context, int index){
+                                  return Padding(
+                                    padding: const EdgeInsets.only(top: 8.0),
+                                    child: Column(
+                                      children: <Widget>[
+                                        Padding(
+                                          padding: const EdgeInsets.only(bottom: 4.0),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data.services[index].name,
+                                                    style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight: FontWeight.w300
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    snapshot.data.services[index].subcategory,
+                                                    style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight: FontWeight.w200
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.end,
+                                                children: <Widget>[
+                                                  GestureDetector(
+                                                      onTap: (){
+                                                        setState(() {
+                                                          if(cart.contains(snapshot.data.services[index].id)){
+                                                            cart.remove(snapshot.data.services[index].id);
+                                                            //0 means remove this id from cart shared prefs
+                                                            _updateCartSharedPref(snapshot.data.services[index].id, 0);
+                                                          } else {
+                                                            cart.add(snapshot.data.services[index].id);
+                                                            //1 means add this id to cart shared prefs
+                                                            _updateCartSharedPref(snapshot.data.services[index].id, 1);
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(right: 4.0),
+                                                            child: Text(
+                                                              "₹" + " "  + snapshot.data.services[index].price.toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 14.0,
+                                                                  fontWeight: FontWeight.w400
+                                                              ),
+                                                              textAlign: TextAlign.right,
+                                                            ),
+                                                          ),
+                                                          (cart.contains(snapshot.data.services[index].id))?
+                                                          _iconAddedToCart : _iconAddToCart,
+                                                        ],
+                                                      )
+                                                  ),
+                                                  (cart.contains(snapshot.data.services[index].id))?
+                                                  _textAddedToCart : _textAddToCart
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        new Divider()
+                                      ],
+                                    ),
+                                  );
+                                },
+                              );
+                            } else if(snapshot.hasError){
+                              return new Center(
+                                child: new Text('Error: ${snapshot.error}'),
+                              );
+                            }
+                            return new CircularProgressIndicator(
+                                valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100))
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                      flex: 1,
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Expanded(
+                            child: RaisedButton(
+                              onPressed: (){
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                );
+                              },
+                              elevation: 5.0,
+                              color: Color(0xff205161),
+                              textColor: Colors.white,
+                              child: Text(
+                                "See more services",
+                                style: TextStyle(
+                                    fontSize: 16.0
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: RaisedButton(
+                              onPressed: (){
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(builder: (context) => CartScreen()),
+                                );
+                              },
+                              elevation: 5.0,
+                              color: Color(0xff073848),
+                              textColor: Colors.white,
+                              child: Text(
+                                "Go to cart",
+                                style: TextStyle(
+                                    fontSize: 16.0
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      )
+                  )
+                ],
+              ),
+            )
+        ),
+      ),
+    );
+  }
+}
+
+/*
+
+ */
+
+/*
+FutureBuilder(
               future: _getServicesList(),
               builder: (BuildContext context, AsyncSnapshot snapshot){
                 if(snapshot.hasData){
@@ -449,200 +605,4 @@ class _ChildServicesState extends State<ChildServices>{
                 );
               },
             ),
-          )
-        ),
-      ),
-    );
-  }
-}
-
-/*
-ListView(
-children: <Widget>[
-Row(
-mainAxisSize: MainAxisSize.max,
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-children: <Widget>[
-Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: <Widget>[
-Text(
-"Feathers",
-style: TextStyle(
-fontSize: 20.0,
-fontWeight: FontWeight.w300
-),
-),
-Text(
-"Hair cutting",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w200
-),
-),
-],
-),
-Text(
-"200 ₹",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w400
-),
-),
-Column(
-children: <Widget>[
-GestureDetector(
-onTap: () {
-setState(() {
-_icon = Icon(
-Icons.check_circle,
-color: Colors.green,
-);
-_cartText = "Added";
-});
-},
-child: _icon),
-Text(
-_cartText,
-style: TextStyle(
-fontSize: 12.0,
-),
-),
-],
-)
-],
-),
-new Divider(),
-Row(
-mainAxisSize: MainAxisSize.max,
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-children: <Widget>[
-Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: <Widget>[
-Text(
-"Multi Layers",
-style: TextStyle(
-fontSize: 20.0,
-fontWeight: FontWeight.w300
-),
-),
-Text(
-"Hair cutting",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w200
-),
-),
-],
-),
-Text(
-"250 ₹",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w400
-),
-),
-Column(
-children: <Widget>[
-_icon,
-Text(
-_cartText,
-style: TextStyle(
-fontSize: 12.0,
-),
-),
-],
-)
-],
-),
-new Divider(),
-Row(
-mainAxisSize: MainAxisSize.max,
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-children: <Widget>[
-Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: <Widget>[
-Text(
-"Steps",
-style: TextStyle(
-fontSize: 20.0,
-fontWeight: FontWeight.w300
-),
-),
-Text(
-"Hair cutting",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w200
-),
-),
-],
-),
-Text(
-"200 ₹",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w400
-),
-),
-Column(
-children: <Widget>[
-Icon(Icons.add_circle_outline),
-Text(
-"Add to cart",
-style: TextStyle(
-fontSize: 12.0,
-),
-),
-],
-)
-],
-),
-new Divider(),
-Row(
-mainAxisSize: MainAxisSize.max,
-mainAxisAlignment: MainAxisAlignment.spaceBetween,
-children: <Widget>[
-Column(
-crossAxisAlignment: CrossAxisAlignment.start,
-children: <Widget>[
-Text(
-"Normal",
-style: TextStyle(
-fontSize: 20.0,
-fontWeight: FontWeight.w300
-),
-),
-Text(
-"Waxing",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w200
-),
-),
-],
-),
-Text(
-"150 ₹",
-style: TextStyle(
-fontSize: 16.0,
-fontWeight: FontWeight.w400
-),
-),
-Column(
-children: <Widget>[
-Icon(Icons.add_circle_outline),
-Text(
-"Add to cart",
-style: TextStyle(
-fontSize: 12.0,
-),
-),
-],
-)
-],
-),
-],
-)*/
+ */
