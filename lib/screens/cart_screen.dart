@@ -142,6 +142,42 @@ class _CartScreenState extends State<CartScreen> {
     }
   }
 
+  _showDeleteConfirmationDialog(value, list){
+
+    AlertDialog _deleteDialog = new AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+      contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+      title: Text("Are you sure you want to remove this item from your cart?"),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: (){Navigator.pop(context);},
+          child: Text("Cancel"),
+        ),
+        FlatButton(
+          onPressed: (){
+            setState(() {
+              _cartList.remove(value);
+              _updateProceedBtnText(
+                list
+              );
+              _updateCartPreferences();
+            });
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => CartScreen())
+            );
+          },
+          child: Text("Yeah"),
+        )
+      ],
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) => _deleteDialog
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -299,15 +335,7 @@ class _CartScreenState extends State<CartScreen> {
                                                       icon: Icon(Icons.delete),
                                                       color: Colors.red,
                                                       onPressed: () {
-                                                        setState(() {
-                                                          _cartList.remove(
-                                                            snapshot.data[index].id
-                                                          );
-                                                          _updateProceedBtnText(
-                                                            snapshot.data,
-                                                          );
-                                                          _updateCartPreferences();
-                                                        });
+                                                        _showDeleteConfirmationDialog(snapshot.data[index].id, snapshot.data);
                                                       },
                                                     )
                                                   ],
