@@ -197,7 +197,8 @@ class _HomeScreenState extends State<HomeScreen> {
             context: context,
             builder: (BuildContext context) {
               return new AlertDialog(
-                content: new Text('Are you sure you want to log out?'),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+                title: Text("Are you sure you want to log out?"),
                 actions: <Widget>[
                   new FlatButton(
                     onPressed: () {

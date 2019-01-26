@@ -109,7 +109,7 @@ class _ChildFaqState extends State<ChildFaq>{
             ),
           ),
           Expanded(
-            flex: 1,
+            flex: (MediaQuery.of(context).orientation == Orientation.portrait)? 1 : 2,
             child: RaisedButton(
               onPressed: () => _callSupport(),
               color: Color(0xff073848),

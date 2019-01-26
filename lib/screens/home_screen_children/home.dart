@@ -107,7 +107,9 @@ class _ChildHomeState extends State<ChildHome>{
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: new SizedBox(
-                height: MediaQuery.of(context).size.height * 0.30,
+                height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
+                          MediaQuery.of(context).size.height * 0.30
+                          : MediaQuery.of(context).size.height * 0.60,
                 width: MediaQuery.of(context).size.width,
                 child: new Carousel(
                   images: [
