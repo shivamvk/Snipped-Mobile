@@ -29,6 +29,7 @@ dependencies:
   firebase_messaging: ^2.1.0
   flutter_local_notifications: ^0.4.4+2
   datetime_picker_formfield: ^0.1.8
+  url_launcher: ^4.2.0+1
 
 
 

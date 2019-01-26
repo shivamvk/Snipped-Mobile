@@ -226,7 +226,7 @@ class _ChildHomeState extends State<ChildHome>{
                   child: Column(
                     children: <Widget>[
                       GestureDetector(
-                        onTap: () =>_openServicesPage("Others"),
+                        onTap: () =>_openServicesPage("Waxing"),
                         child: Container(
                             width: MediaQuery.of(context).size.width * 0.43,
                             child: Center(
@@ -238,7 +238,7 @@ class _ChildHomeState extends State<ChildHome>{
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: new Text("Others"),
+                        child: new Text("Waxing"),
                       )
                     ],
                   ),

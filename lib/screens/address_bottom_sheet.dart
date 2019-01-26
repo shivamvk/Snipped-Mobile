@@ -41,6 +41,8 @@ String _dateErrorText = "This field is required!";
 String _timeErrorText = "This field is required!";
 String _proceedBtnText;
 
+bool _isRefreshing = false;
+
 final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
 
@@ -113,26 +115,50 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       return;
     }
 
-    _showNotification();
+    setState(() {
+      _isRefreshing = true;
+    });
 
-    _clearCart();
+    getEmailPreferences()
+      .then((value){
+        _sendEmail(value)
+            .then((bool){
+              _clearCart();
+              _showNotification();
+              setState(() {
+                _isRefreshing = false;
+              });
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => OrderPlacedScreen(
+                      widget.totalValue,
+                      widget.cartList,
+                      "5447800add45ad",
+                      _date,
+                      _time,
+                      pincode,
+                      flat,
+                      colony,
+                      city
+                  )
+                  )
+              );
+        });
+    });
+  }
 
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => OrderPlacedScreen(
-          widget.totalValue,
-          widget.cartList,
-          "5447800add45ad",
-          _date,
-          _time,
-          pincode,
-          flat,
-          colony,
-          city
-        )
-      )
-    );
-
+  Future<String> getEmailPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("userEmail") ?? "";
+  }
+  
+  Future<bool> _sendEmail(value) async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/mail/order_placed";
+    Map<String, String> map = {
+      "email" : value
+    };
+    var data = await http.post(url, body: map);
+    return true;
   }
 
   _clearCart(){
@@ -382,11 +408,18 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                 textColor: Colors.white,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Text(
-                    _proceedBtnText,
-                    style: TextStyle(
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.w400
+                  child: _isRefreshing?
+                  new CircularProgressIndicator(
+                      valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100))
+                  ) :
+                  Padding(
+                    padding: EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Text(
+                      _proceedBtnText,
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        fontWeight: FontWeight.w400
+                      ),
                     ),
                   ),
                 ),

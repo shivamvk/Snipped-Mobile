@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 import 'home_screen.dart';
 
@@ -29,6 +30,14 @@ class OrderPlacedScreen extends StatefulWidget{
 }
 
 class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
+
+  static String _statusText = "Processing...";
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -221,7 +230,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                           ),
                         ),
                         Text(
-                          "Processing",
+                          _statusText,
                           style: TextStyle(
                               fontSize: 16.0,
                               color: Colors.green,

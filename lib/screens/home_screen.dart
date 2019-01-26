@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
 import 'home_screen_children/orders.dart';
+import 'home_screen_children/faq.dart';
 import 'cart_screen.dart';
 import 'package:snipped/models/Notification.dart';
 //The homeScreen for the app.
@@ -39,7 +40,11 @@ final List<Widget> _drawerChildren = [
   new Container(
     color: Colors.white,
     child: new ChildOrders(),
-  )
+  ),
+  new Container(
+    color: Colors.white,
+    child: new ChildFaq(),
+  ),
 ];
 
 String _notificationTitle;
@@ -49,7 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
 
-    var initializationSettingsAndroid = new AndroidInitializationSettings('launch_background');
+    var initializationSettingsAndroid = new AndroidInitializationSettings('brandlogonotification');
     var initializationSettingsIOS = new IOSInitializationSettings();
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
@@ -62,10 +67,9 @@ class _HomeScreenState extends State<HomeScreen> {
     _firebaseMessaging.configure(
       onMessage: (notification){
         setState(() {
-          print("on message called ${(notification['notification'])}");
-          String string = notification['notification'].toString();
-          _notificationTitle = string.substring(8, 33);
-          _notificationText = string.substring(40, 110);
+          print("on message called ${(notification)}");
+          _notificationTitle = notification['notification']['title'];
+          _notificationText = notification['notification']['body'];
         });
         _showNotification();
       }
@@ -183,6 +187,11 @@ class _HomeScreenState extends State<HomeScreen> {
           _currentIndex = 1;
         });
         break;
+      case "faq":
+        setState(() {
+          _currentIndex = 2;
+        });
+        break;
       case "logout":
         showDialog(
             context: context,
@@ -205,6 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               );
             });
+          break;
     }
   }
 
@@ -293,7 +303,7 @@ class _HomeScreenState extends State<HomeScreen> {
             new ListTile(
               title: new Text("Help and support"),
               trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("contact"),
+              onTap: () => _onDrawerTapped("faq"),
             ),
             new ListTile(
               title: new Text("Log out"),
