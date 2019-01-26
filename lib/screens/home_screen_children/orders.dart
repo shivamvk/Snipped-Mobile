@@ -10,8 +10,14 @@ class _ChildOrdersState extends State<ChildOrders>{
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Text("Orders"),
+    return Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Text("Show on")
+          ],
+        )
+      ],
     );
   }
 

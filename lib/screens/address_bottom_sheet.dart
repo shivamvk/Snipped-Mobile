@@ -3,11 +3,13 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 import 'order_placed_screen.dart';
+import 'package:snipped/models/Order.dart';
 
 class AddressBottomSheet extends StatefulWidget{
 
@@ -33,6 +35,7 @@ final _colonyController = new TextEditingController();
 final _cityController = new TextEditingController();
 final _dateController = new TextEditingController();
 final _timeController = new TextEditingController();
+final _remarksController = new TextEditingController();
 
 var _date;
 var _time;
@@ -42,6 +45,11 @@ String _timeErrorText = "This field is required!";
 String _proceedBtnText;
 
 bool _isRefreshing = false;
+
+String _name;
+String _email;
+String _phone;
+String _cart;
 
 final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
@@ -55,6 +63,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     String city = _cityController.text;
     String date = _dateController.text;
     String time = _timeController.text;
+    String remarks = _remarksController.text;
 
     if(pincode.isEmpty){
       setState(() {
@@ -115,41 +124,86 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       return;
     }
 
+    if(remarks.isEmpty){
+      remarks = "none";
+    }
+
     setState(() {
       _isRefreshing = true;
     });
 
-    getEmailPreferences()
+    _placeOrder(flat, colony, city, pincode, remarks)
       .then((value){
-        _sendEmail(value)
+        _sendEmail(_email)
             .then((bool){
-              _clearCart();
-              _showNotification();
-              setState(() {
-                _isRefreshing = false;
-              });
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => OrderPlacedScreen(
-                      widget.totalValue,
-                      widget.cartList,
-                      "5447800add45ad",
-                      _date,
-                      _time,
-                      pincode,
-                      flat,
-                      colony,
-                      city
-                  )
-                  )
-              );
+          _clearCart();
+          _showNotification();
+          setState(() {
+            _isRefreshing = false;
+          });
+          Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => OrderPlacedScreen(
+                  widget.totalValue,
+                  widget.cartList,
+                  value,
+                  _date,
+                  _time,
+                  pincode,
+                  flat,
+                  colony,
+                  city
+              )
+              )
+          );
         });
-    });
+      });
+  }
+
+  Future<String> _placeOrder(flat, colony, city, pincode, remarks) async{
+    var date = DateTime.now();
+    var dateFormatter = DateFormat("dd-MM-yyyy");
+    String formattedDate = dateFormatter.format(date);
+    var timeFormatter = DateFormat("HH:mm");
+    String formattedTime = timeFormatter.format(date);
+    Map<String, String> map = {
+      "phone" : _phone,
+      "services" : _cart,
+      "amount" : widget.totalValue.toString(),
+      "address" : _name + ", " + flat + ", " + colony + ", " + city + ". Pincode: " + pincode + ". Phone: " + _phone,
+      "date" : formattedDate,
+      "time" : formattedTime,
+      "appointmentDate" : _date.day.toString() + "-" + _date.month.toString() + "-" + _date.year.toString(),
+      "appointmentTime" : _time.hour.toString() + ":" + _time.minute.toString(),
+      "status" : "Pending",
+      "remarks" : remarks
+    };
+
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order";
+    var data = await http.post(url, body: map);
+
+    Response response = Response.fromJson(json.decode(data.body));
+    return response.orders[0].id;
   }
 
   Future<String> getEmailPreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("userEmail") ?? "";
+  }
+
+  Future<String> getNamePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("userName") ?? "";
+  }
+
+  Future<String> getPhonePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("userPhone") ?? "";
+  }
+
+  Future<String> getCartPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("cart") ?? "";
   }
   
   Future<bool> _sendEmail(value) async{
@@ -175,7 +229,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     if(_time.hour < 11){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service before 11!";
+        _timeErrorText = "We currently don't service before 11 a.m!";
       });
       return false;
     }
@@ -183,7 +237,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       if(_time.minute != 0){
         setState(() {
           _timeError = true;
-          _timeErrorText = "We currently don't service after 7!";
+          _timeErrorText = "We currently don't service after 7 p.m!";
         });
         return false;
       }
@@ -191,7 +245,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     if(_time.hour > 19){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service after 7!";
+        _timeErrorText = "We currently don't service after 7 p.m!";
       });
       return false;
     }
@@ -251,6 +305,29 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     var initializationSettings = new InitializationSettings(
         initializationSettingsAndroid, initializationSettingsIOS);
     localNotificationsPlugin.initialize(initializationSettings);
+
+    getEmailPreferences()
+      .then((value){
+        setState(() {
+          _email = value;
+        });
+    });
+
+    getNamePreferences()
+      .then((value){
+        _name = value;
+    });
+
+    getPhonePreferences()
+      .then((value){
+        _phone = value;
+    });
+
+    getCartPreferences()
+      .then((value){
+        _cart = value;
+    });
+
     super.initState();
   }
 
@@ -397,6 +474,21 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
                 _time = value;
               },
               controller: _timeController,
+            ),
+            TextField(
+              decoration: InputDecoration(
+                  labelText: "Any special instructions(Optional)",
+                  labelStyle: new TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w300
+                  ),
+              ),
+              keyboardType: TextInputType.text,
+              cursorColor: new Color(0xffff7100),
+              style: new TextStyle(
+                  color: Colors.black
+              ),
+              controller: _remarksController,
             ),
             Padding(
               padding: const EdgeInsets.only(top: 16.0),

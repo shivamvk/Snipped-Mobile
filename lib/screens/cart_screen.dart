@@ -13,6 +13,7 @@ class CartScreen extends StatefulWidget {
 }
 
 List<String> _cartList = new List();
+List<String> _showDetailsList = new List();
 String _cartPrefString;
 String _proceedBtnText = "";
 final _couponController = new TextEditingController();
@@ -162,6 +163,7 @@ class _CartScreenState extends State<CartScreen> {
               );
               _updateCartPreferences();
             });
+            Navigator.pop(context);
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(builder: (context) => CartScreen())
@@ -304,6 +306,39 @@ class _CartScreenState extends State<CartScreen> {
                                                       fontWeight:
                                                       FontWeight.w200),
                                                 ),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      if(_showDetailsList.contains(snapshot.data[index].id)){
+                                                        _showDetailsList.remove(snapshot.data[index].id);
+                                                      } else {
+                                                        _showDetailsList.add(snapshot.data[index].id);
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                            "See details"
+                                                        ),
+                                                        (_showDetailsList.contains(snapshot.data[index].id))?
+                                                        Icon(Icons.arrow_drop_up) : Icon(Icons.arrow_drop_down)
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                (_showDetailsList.contains(snapshot.data[index].id))?
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width * 0.50,
+                                                  child: Text(
+                                                    snapshot.data[index].description,
+                                                    style: TextStyle(
+                                                        fontSize: 14.0,
+                                                        fontWeight: FontWeight.w300
+                                                    ),
+                                                  ),
+                                                ) : new Container(),
                                               ],
                                             ),
                                             Column(

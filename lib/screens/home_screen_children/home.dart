@@ -286,6 +286,7 @@ Text _textAddedToCart = Text(
 
 List<String> cart = new List();
 String _cartPrefString = "";
+List<String> list = new List();
 
 Future<Response> _getServicesList() async{
   String url =
@@ -347,110 +348,138 @@ class _ChildServicesState extends State<ChildServices>{
             },
           ),
         ),
-        body: Padding(
-            padding: const EdgeInsets.only(top: 0.0),
-            child: Center(
+        body: Center(
               child: Column(
                 children: <Widget>[
                   Expanded(
                     flex: 13,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 16.0, right: 16.0),
-                      child: Center(
-                        child: FutureBuilder(
-                          future: _getServicesList(),
-                          builder: (BuildContext context, AsyncSnapshot snapshot){
-                            if(snapshot.hasData){
-                              return new ListView.builder(
-                                itemCount: snapshot.data.services.length,
-                                itemBuilder: (BuildContext context, int index){
-                                  return Padding(
-                                    padding: const EdgeInsets.only(top: 8.0),
-                                    child: Column(
-                                      children: <Widget>[
-                                        Padding(
-                                          padding: const EdgeInsets.only(bottom: 4.0),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.max,
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text(
-                                                    snapshot.data.services[index].name,
-                                                    style: TextStyle(
-                                                        fontSize: 20.0,
-                                                        fontWeight: FontWeight.w300
+                    child: Center(
+                      child: FutureBuilder(
+                        future: _getServicesList(),
+                        builder: (BuildContext context, AsyncSnapshot snapshot){
+                          if(snapshot.hasData){
+                            return new ListView.builder(
+                              itemCount: snapshot.data.services.length,
+                              itemBuilder: (BuildContext context, int index){
+                                return Padding(
+                                  padding: const EdgeInsets.only(top: 8.0, left: 16.0, right: 16.0),
+                                  child: Column(
+                                    children: <Widget>[
+                                      Padding(
+                                        padding: const EdgeInsets.only(bottom: 4.0),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: <Widget>[
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: <Widget>[
+                                                Text(
+                                                  snapshot.data.services[index].name,
+                                                  style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontWeight: FontWeight.w300
+                                                  ),
+                                                ),
+                                                Text(
+                                                  snapshot.data.services[index].subcategory,
+                                                  style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight: FontWeight.w200
+                                                  ),
+                                                ),
+                                                GestureDetector(
+                                                  onTap: (){
+                                                    setState(() {
+                                                      if(list.contains(snapshot.data.services[index].id)){
+                                                        list.remove(snapshot.data.services[index].id);
+                                                      } else {
+                                                        list.add(snapshot.data.services[index].id);
+                                                      }
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Text(
+                                                          "See details"
+                                                        ),
+                                                        (list.contains(snapshot.data.services[index].id))?
+                                                        Icon(Icons.arrow_drop_up) : Icon(Icons.arrow_drop_down)
+                                                      ],
                                                     ),
                                                   ),
-                                                  Text(
-                                                    snapshot.data.services[index].subcategory,
+                                                ),
+                                                (list.contains(snapshot.data.services[index].id))?
+                                                Container(
+                                                  width: MediaQuery.of(context).size.width * 0.50,
+                                                  child: Text(
+                                                    snapshot.data.services[index].description,
                                                     style: TextStyle(
-                                                        fontSize: 16.0,
-                                                        fontWeight: FontWeight.w200
+                                                      fontSize: 14.0,
+                                                      fontWeight: FontWeight.w300
                                                     ),
                                                   ),
-                                                ],
-                                              ),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.end,
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                      onTap: (){
-                                                        setState(() {
-                                                          if(cart.contains(snapshot.data.services[index].id)){
-                                                            cart.remove(snapshot.data.services[index].id);
-                                                            //0 means remove this id from cart shared prefs
-                                                            _updateCartSharedPref(snapshot.data.services[index].id, 0);
-                                                          } else {
-                                                            cart.add(snapshot.data.services[index].id);
-                                                            //1 means add this id to cart shared prefs
-                                                            _updateCartSharedPref(snapshot.data.services[index].id, 1);
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Row(
-                                                        children: <Widget>[
-                                                          Padding(
-                                                            padding: const EdgeInsets.only(right: 4.0),
-                                                            child: Text(
-                                                              "₹" + " "  + snapshot.data.services[index].price.toString(),
-                                                              style: TextStyle(
-                                                                  fontSize: 14.0,
-                                                                  fontWeight: FontWeight.w400
-                                                              ),
-                                                              textAlign: TextAlign.right,
+                                                ) : new Container(),
+                                              ],
+                                            ),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: <Widget>[
+                                                GestureDetector(
+                                                    onTap: (){
+                                                      setState(() {
+                                                        if(cart.contains(snapshot.data.services[index].id)){
+                                                          cart.remove(snapshot.data.services[index].id);
+                                                          //0 means remove this id from cart shared prefs
+                                                          _updateCartSharedPref(snapshot.data.services[index].id, 0);
+                                                        } else {
+                                                          cart.add(snapshot.data.services[index].id);
+                                                          //1 means add this id to cart shared prefs
+                                                          _updateCartSharedPref(snapshot.data.services[index].id, 1);
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(right: 4.0),
+                                                          child: Text(
+                                                            "₹" + " "  + snapshot.data.services[index].price.toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 14.0,
+                                                                fontWeight: FontWeight.w400
                                                             ),
+                                                            textAlign: TextAlign.right,
                                                           ),
-                                                          (cart.contains(snapshot.data.services[index].id))?
-                                                          _iconAddedToCart : _iconAddToCart,
-                                                        ],
-                                                      )
-                                                  ),
-                                                  (cart.contains(snapshot.data.services[index].id))?
-                                                  _textAddedToCart : _textAddToCart
-                                                ],
-                                              )
-                                            ],
-                                          ),
+                                                        ),
+                                                        (cart.contains(snapshot.data.services[index].id))?
+                                                        _iconAddedToCart : _iconAddToCart,
+                                                      ],
+                                                    )
+                                                ),
+                                                (cart.contains(snapshot.data.services[index].id))?
+                                                _textAddedToCart : _textAddToCart
+                                              ],
+                                            )
+                                          ],
                                         ),
-                                        new Divider()
-                                      ],
-                                    ),
-                                  );
-                                },
-                              );
-                            } else if(snapshot.hasError){
-                              return new Center(
-                                child: new Text('Error: ${snapshot.error}'),
-                              );
-                            }
-                            return new CircularProgressIndicator(
-                                valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100))
+                                      ),
+                                      new Divider()
+                                    ],
+                                  ),
+                                );
+                              },
                             );
-                          },
-                        ),
+                          } else if(snapshot.hasError){
+                            return new Center(
+                              child: new Text('Error: ${snapshot.error}'),
+                            );
+                          }
+                          return new CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100))
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -504,8 +533,7 @@ class _ChildServicesState extends State<ChildServices>{
               ),
             )
         ),
-      ),
-    );
+      );
   }
 }
 
