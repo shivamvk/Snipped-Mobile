@@ -99,156 +99,355 @@ class _ChildHomeState extends State<ChildHome>{
     return prefs.commit();
   }
 
+  Future<List<Service>> _getTrendingServices() async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/trending";
+    var data = await http.get(url);
+
+    Response response = Response.fromJson(json.decode(data.body));
+    return response.services;
+  }
+
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: new Column(
-        children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new SizedBox(
-                height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
-                          MediaQuery.of(context).size.height * 0.30
-                          : MediaQuery.of(context).size.height * 0.60,
-                width: MediaQuery.of(context).size.width,
-                child: new Carousel(
-                  images: [
-                    new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                    new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
-                    new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                    new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
-                    new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                  ],
-                  dotSize: 0,
-                  dotBgColor: Colors.white.withOpacity(0.0),
-                  autoplayDuration: Duration(seconds: 6),
-                  animationCurve: Curves.fastOutSlowIn,
-                  borderRadius: true,
-                )
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: new Text(
-              "Categories",
-              style: new TextStyle(
-                  color: Colors.black,
-                  fontSize: 16.0,
-                  fontWeight: FontWeight.w700
+      child: Container(
+        color: Colors.grey[200],
+        child: new Column(
+          children: <Widget>[
+            Container(
+              color: Colors.white,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: new SizedBox(
+                    height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
+                              MediaQuery.of(context).size.height * 0.30
+                              : MediaQuery.of(context).size.height * 0.60,
+                    width: MediaQuery.of(context).size.width,
+                    child: new Carousel(
+                      images: [
+                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
+                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
+                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
+                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
+                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
+                      ],
+                      dotSize: 0,
+                      dotBgColor: Colors.white.withOpacity(0.0),
+                      autoplayDuration: Duration(seconds: 6),
+                      animationCurve: Curves.fastOutSlowIn,
+                      borderRadius: true,
+                    )
+                ),
               ),
             ),
-          ),
-          new Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 5.0,
-                  child: Column(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap:() => _openServicesPage("Hair"),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.43,
-                            child: Center(
-                                child: new Image.asset(
-                                  "images/hair.jpg",
-                                )
-                            )
-                        ),
+            Padding(padding: EdgeInsets.only(top: 12.0)),
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text(
+                      "Trending services",
+                      style: new TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w400
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new Text("Hair"),
-                      )
-                    ],
+                    ),
                   ),
-                ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Container(
+                      height: 200.0,
+                      child: FutureBuilder(
+                        future: _getTrendingServices(),
+                        builder: (BuildContext context, AsyncSnapshot snapshot){
+                          if(snapshot.hasData){
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              itemCount: snapshot.data.length,
+                              itemBuilder: (BuildContext context, int index){
+                                return Padding(
+                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(color: Colors.grey[200])
+                                    ),
+                                    width: MediaQuery.of(context).size.width * 0.70,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: <Widget>[
+                                          Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                snapshot.data[index].name,
+                                                style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.w300
+                                                ),
+                                              ),
+                                              Text(
+                                                snapshot.data[index].subcategory,
+                                                style: TextStyle(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.w200
+                                                ),
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context).size.width * 0.40,
+                                                child: Text(
+                                                  snapshot.data[index].description,
+                                                  style: TextStyle(
+                                                    fontSize: 14.0,
+                                                    fontWeight: FontWeight.w300
+                                                  ),
+                                                )
+                                              )
+                                            ],
+                                          ),
+                                          Column(
+                                            children: <Widget>[
+                                              GestureDetector(
+                                                onTap: (){
+                                                  setState(() {
+                                                    if(cart.contains(snapshot.data[index].id)){
+                                                      cart.remove(snapshot.data[index].id);
+                                                      //0 means remove this id from cart shared prefs
+                                                      _updateCartSharedPref(snapshot.data[index].id, 0);
+                                                    } else {
+                                                      cart.add(snapshot.data[index].id);
+                                                      //1 means add this id to cart shared prefs
+                                                      _updateCartSharedPref(snapshot.data[index].id, 1);
+                                                    }
+                                                  });
+                                                },
+                                                child: Row(
+                                                  children: <Widget>[
+                                                    Padding(
+                                                      padding: const EdgeInsets.only(right: 4.0),
+                                                      child: Text(
+                                                        "₹" + " "  + snapshot.data[index].price.toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 14.0,
+                                                            fontWeight: FontWeight.w400
+                                                        ),
+                                                        textAlign: TextAlign.right,
+                                                      ),
+                                                    ),
+                                                    (cart.contains(snapshot.data[index].id))?
+                                                    _iconAddedToCart : _iconAddToCart,
+                                                  ],
+                                                ),
+                                              ),
+                                              (cart.contains(snapshot.data[index].id))?
+                                              _textAddedToCart : _textAddToCart
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              },
+                            );
+                          } else{
+                            return new Container();
+                          }
+                        },
+                      )
+                    ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 5.0,
-                  child: Column(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () => _openServicesPage("Beauty"),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.43,
-                            child: Center(
-                                child: new Image.asset(
-                                  "images/facial.jpg",
-                                )
-                            )
-                        ),
+            ),
+            Padding(padding: EdgeInsets.only(top: 12.0)),
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                    child: Container(
+                      height: 100.0,
+                      child: ListView(
+                        scrollDirection: Axis.horizontal,
+                        children: <Widget>[
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new Text("Beauty"),
-                      )
-                    ],
-                  ),
-                ),
-              )
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 5.0,
-                  child: Column(
-                    children: <Widget>[
-                      GestureDetector(
-                        onTap: () => _openServicesPage("Makeup"),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.43,
-                            child: Center(
-                                child: new Image.asset(
-                                    "images/makeup.jpg"
-                                )
-                            )
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: new Text("Make up"),
-                      )
-                    ],
-                  ),
-                ),
+                    ),
+                  )
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Card(
-                  elevation: 5.0,
-                  child: Column(
+            ),
+            Padding(padding: EdgeInsets.only(top: 12.0)),
+            Container(
+              color: Colors.white,
+              child: Column(
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: new Text(
+                      "Categories",
+                      style: new TextStyle(
+                          color: Colors.black,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w400
+                      ),
+                    ),
+                  ),
+                  new Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      GestureDetector(
-                        onTap: () =>_openServicesPage("Waxing"),
-                        child: Container(
-                            width: MediaQuery.of(context).size.width * 0.43,
-                            child: Center(
-                                child: new Image.asset(
-                                    "images/facial.jpg"
-                                )
-                            ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Column(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap:() => _openServicesPage("Hair"),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width * 0.43,
+                                    child: Center(
+                                        child: new Image.asset(
+                                          "images/hair.jpg",
+                                        )
+                                    )
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new Text("Hair"),
+                              )
+                            ],
+                          ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
-                        child: new Text("Waxing"),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Column(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () => _openServicesPage("Beauty"),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width * 0.43,
+                                    child: Center(
+                                        child: new Image.asset(
+                                          "images/facial.jpg",
+                                        )
+                                    )
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new Text("Beauty"),
+                              )
+                            ],
+                          ),
+                        ),
                       )
                     ],
                   ),
-                ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Column(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () => _openServicesPage("Makeup"),
+                                child: Container(
+                                    width: MediaQuery.of(context).size.width * 0.43,
+                                    child: Center(
+                                        child: new Image.asset(
+                                            "images/makeup.jpg"
+                                        )
+                                    )
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new Text("Make up"),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Card(
+                          elevation: 5.0,
+                          child: Column(
+                            children: <Widget>[
+                              GestureDetector(
+                                onTap: () =>_openServicesPage("Waxing"),
+                                child: Container(
+                                  width: MediaQuery.of(context).size.width * 0.43,
+                                  child: Center(
+                                      child: new Image.asset(
+                                          "images/facial.jpg"
+                                      )
+                                  ),
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: new Text("Waxing"),
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                ],
               ),
-            ],
-          )
-        ],
+            ),
+            new Container(
+              height: 150.0,
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text("Made with "),
+                      Icon(
+                        Icons.favorite,
+                        color: Colors.red,
+                      ),
+                    ],
+                  ),
+                  Text(
+                    "for Beauty Enthusiats."
+                  )
+                ],
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
