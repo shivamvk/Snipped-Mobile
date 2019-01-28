@@ -134,28 +134,35 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
     _placeOrder(flat, colony, city, pincode, remarks)
       .then((value){
-        _sendEmail(_email)
+        _sendEmail(_email, value)
             .then((bool){
           _clearCart();
           _showNotification();
           setState(() {
             _isRefreshing = false;
           });
-          Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => OrderPlacedScreen(
-                  widget.totalValue,
-                  widget.cartList,
-                  value,
-                  _date,
-                  _time,
-                  pincode,
-                  flat,
-                  colony,
-                  city
-              )
-              )
-          );
+          FirebaseMessaging firebaseMessaging = FirebaseMessaging();
+          firebaseMessaging.subscribeToTopic(value);
+          getFirebaseNotificationsSubscription()
+            .then((subs){
+              String string = subs + value + ",";
+              saveFirebaseNotificationsSubscription(string);
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => OrderPlacedScreen(
+                    widget.totalValue,
+                    widget.cartList,
+                    value,
+                    _date,
+                    _time,
+                    pincode,
+                    flat,
+                    colony,
+                    city
+                )
+                )
+              );
+          });
         });
       });
   }
@@ -184,6 +191,18 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
     Response response = Response.fromJson(json.decode(data.body));
     return response.orders[0].id;
+
+  }
+
+  Future<String> getFirebaseNotificationsSubscription() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("subscription") ?? "";
+  }
+
+  Future<bool> saveFirebaseNotificationsSubscription(value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();;
+    prefs.setString("subscription", value);
+    return prefs.commit();
   }
 
   Future<String> getEmailPreferences() async {
@@ -206,10 +225,11 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     return prefs.getString("cart") ?? "";
   }
   
-  Future<bool> _sendEmail(value) async{
+  Future<bool> _sendEmail(value, orderid) async{
     String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/mail/order_placed";
     Map<String, String> map = {
-      "email" : value
+      "email" : value,
+      "orderId" : orderid
     };
     var data = await http.post(url, body: map);
     return true;

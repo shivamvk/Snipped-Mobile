@@ -89,7 +89,10 @@ class _ChildFaqState extends State<ChildFaq>{
                                       ),
                                     )
                                     : new Container(),
-                                (list.contains(snapshot.data[index].id))? Container() : Divider()
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: (list.contains(snapshot.data[index].id))? Container() : Divider(),
+                                )
                               ],
                             ),
                           ),

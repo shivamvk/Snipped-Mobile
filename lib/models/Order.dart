@@ -1,8 +1,10 @@
+import 'package:snipped/models/Service.dart';
+
 class Order{
 
   final String id;
   final String phone;
-  final String services;
+  final List<Service> services;
   final String amount;
   final String address;
   final String date;
@@ -27,10 +29,14 @@ class Order{
   });
 
   factory Order.fromJson(Map<String, dynamic> parsedJson){
+
+    var list = parsedJson['services'] as List;
+    List<Service> servicesList = list.map((i) => Service.fromJson(i)).toList();
+
    return Order(
      id: parsedJson['_id'],
      phone: parsedJson['phone'],
-     services: parsedJson['services'],
+     services: servicesList,
      amount: parsedJson['amount'],
      address: parsedJson['address'],
      date: parsedJson['date'],

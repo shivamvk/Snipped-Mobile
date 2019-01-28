@@ -6,13 +6,14 @@ import 'package:connectivity/connectivity.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
 import 'home_screen_children/orders.dart';
 import 'home_screen_children/faq.dart';
 import 'cart_screen.dart';
-import 'package:snipped/models/Notification.dart';
+import 'package:snipped/models/Order.dart';
 //The homeScreen for the app.
 
 class HomeScreen extends StatefulWidget {
@@ -85,6 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         _phone = value;
       });
+      getOrdersList()
+          .then((value){
+        subscribeToTopics(value);
+      });
     });
 
     getEmailPreferences().then((value) {
@@ -107,6 +112,31 @@ class _HomeScreenState extends State<HomeScreen> {
 
     _isConnected();
     super.initState();
+  }
+
+  subscribeToTopics(List<Order> value){
+    String string = "";
+    for(int i=0; i<value.length; i++){
+      _firebaseMessaging.subscribeToTopic(value[i].id);
+      string = string + value[i].id + ",";
+    }
+    saveFirebaseNotificationsSubscription(string)
+      .then((value){
+        return value;
+    });
+  }
+
+  Future<bool> saveFirebaseNotificationsSubscription(value) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();;
+    prefs.setString("subscription", value);
+    return prefs.commit();
+  }
+
+  Future<List<Order>> getOrdersList() async{
+    print("url called is ${(_phone)}");
+    var data = await http.get("http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/" + _phone);
+    Response response = Response.fromJson(json.decode(data.body));
+    return response.orders;
   }
 
   _showNotification() async{
@@ -170,8 +200,26 @@ class _HomeScreenState extends State<HomeScreen> {
   void _logout() {
     FirebaseAuth.instance.signOut();
     savePreferences("", "", "", "");
+    getFirebaseNotificationsSubscription()
+      .then((value){
+        unsubscribe(value);
+    });
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  }
+
+  unsubscribe(value){
+    List<String> list = value.toString().split(",");
+    for(int i=0; i<list.length; i++){
+      if(list[i].length > 1){
+        _firebaseMessaging.unsubscribeFromTopic(list[i]);
+      }
+    }
+  }
+
+  Future<String> getFirebaseNotificationsSubscription() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("subscription") ?? "";
   }
 
   void _onDrawerTapped(value) {
