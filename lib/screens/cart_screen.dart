@@ -83,6 +83,10 @@ class _CartScreenState extends State<CartScreen> {
     for (int i = 0; i < list.length; i++) {
       total += list[i].price;
     }
+
+    list.add(Service());
+    list.add(Service());
+
     setState(() {
       _total = total;
       _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
@@ -215,226 +219,216 @@ class _CartScreenState extends State<CartScreen> {
                     ),
                   )
                 : Center(
-                    child: Column(
-                      children: <Widget>[
-                        Expanded(
-                          flex: 9,
-                          child: FutureBuilder(
-                            future: _getCartItemsById(),
-                            builder:
-                                (BuildContext context, AsyncSnapshot snapshot) {
-                              if (snapshot.hasData) {
-                                return ListView.builder(
-                                  itemCount: _cartList.length,
-                                  itemBuilder:
-                                      (BuildContext context, int index) {
-                                    if (_cartList
-                                        .contains(snapshot.data[index].id)) {
-                                      return Column(
-                                        children: <Widget>[
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                top: 4.0,
-                                                bottom: 4.0,
-                                                left: 8.0),
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: <Widget>[
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      snapshot.data[index].name,
-                                                      style: TextStyle(
-                                                          fontSize: 20.0,
-                                                          fontWeight:
-                                                              FontWeight.w300),
-                                                    ),
-                                                    Text(
-                                                      snapshot.data[index]
-                                                          .subcategory,
-                                                      style: TextStyle(
-                                                          fontSize: 16.0,
-                                                          fontWeight:
-                                                              FontWeight.w200),
-                                                    ),
-                                                    GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          if (_showDetailsList
-                                                              .contains(snapshot
-                                                                  .data[index]
-                                                                  .id)) {
-                                                            _showDetailsList
-                                                                .remove(snapshot
-                                                                    .data[index]
-                                                                    .id);
-                                                          } else {
-                                                            _showDetailsList
-                                                                .add(snapshot
-                                                                    .data[index]
-                                                                    .id);
-                                                          }
-                                                        });
-                                                      },
-                                                      child: Container(
-                                                        child: Row(
-                                                          children: <Widget>[
-                                                            Text("See details"),
-                                                            (_showDetailsList
-                                                                    .contains(snapshot
-                                                                        .data[
-                                                                            index]
-                                                                        .id))
-                                                                ? Icon(Icons
-                                                                    .arrow_drop_up)
-                                                                : Icon(Icons
-                                                                    .arrow_drop_down)
-                                                          ],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    (_showDetailsList.contains(
-                                                            snapshot.data[index]
-                                                                .id))
-                                                        ? Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                0.50,
-                                                            child: Text(
-                                                              snapshot
-                                                                  .data[index]
-                                                                  .description,
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w300),
-                                                            ),
-                                                          )
-                                                        : new Container(),
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: <Widget>[
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 4.0),
-                                                          child: Text(
-                                                            "₹" +
-                                                                " " +
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .price
-                                                                    .toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 14.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400),
-                                                            textAlign:
-                                                                TextAlign.right,
-                                                          ),
-                                                        ),
-                                                        IconButton(
-                                                          icon: Icon(
-                                                              Icons.delete),
-                                                          color: Colors.red,
-                                                          onPressed: () {
-                                                            _showDeleteConfirmationDialog(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .id,
-                                                                snapshot.data);
-                                                          },
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
-                                            ),
+                    child: FutureBuilder(
+                      future: _getCartItemsById(),
+                      builder:
+                          (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasData) {
+                          return ListView.builder(
+                            itemCount: _cartList.length + 2,
+                            itemBuilder:
+                                (BuildContext context, int index) {
+                              if(index == _cartList.length){
+                                return Padding(
+                                  padding: EdgeInsets.all(8.0),
+                                  child: TextField(
+                                    decoration: InputDecoration(
+                                        labelText: "Have a coupon code?",
+                                        border: OutlineInputBorder(),
+                                        suffix: GestureDetector(
+                                          onTap: () => _validateCouponCode(),
+                                          child: Icon(
+                                            Icons.send,
+                                            color: Colors.green,
                                           ),
-                                          new Divider()
-                                        ],
-                                      );
-                                    }
-                                  },
-                                );
-                              } else if (snapshot.hasError) {
-                                return new Center(
-                                  child: new Text('Error: ${snapshot.error}'),
+                                        )),
+                                    cursorColor: Color(0xffff7100),
+                                    textCapitalization:
+                                    TextCapitalization.characters,
+                                    controller: _couponController,
+                                  ),
                                 );
                               }
-                              return Center(
-                                child: new CircularProgressIndicator(
-                                    valueColor:
-                                        new AlwaysStoppedAnimation<Color>(
-                                            Color(0xffff7100))),
-                              );
-                            },
-                          ),
-                        ),
-                        Expanded(
-                          flex: 3,
-                          child: Column(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.all(8.0),
-                                child: TextField(
-                                  decoration: InputDecoration(
-                                      labelText: "Have a coupon code?",
-                                      border: OutlineInputBorder(),
-                                      suffix: GestureDetector(
-                                        onTap: () => _validateCouponCode(),
-                                        child: Icon(
-                                          Icons.send,
-                                          color: Colors.green,
-                                        ),
-                                      )),
-                                  cursorColor: Color(0xffff7100),
-                                  textCapitalization:
-                                      TextCapitalization.characters,
-                                  controller: _couponController,
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.fromLTRB(
-                                    8.0, 24.0, 8.0, 16.0),
-                                child: RaisedButton(
-                                  elevation: 10.0,
-                                  color: Color(0xff073848),
-                                  textColor: Colors.white,
-                                  onPressed: _showAddressBottomSheet,
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 12.0, bottom: 12.0),
-                                    child: Text(
-                                      _proceedBtnText,
-                                      style: TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.w400),
+                              if(index == _cartList.length + 1){
+                                return Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      8.0, 24.0, 8.0, 16.0),
+                                  child: RaisedButton(
+                                    elevation: 10.0,
+                                    color: Color(0xff073848),
+                                    textColor: Colors.white,
+                                    onPressed: _showAddressBottomSheet,
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 12.0, bottom: 12.0),
+                                      child: Text(
+                                        _proceedBtnText,
+                                        style: TextStyle(
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w400),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                                );
+                              }
+                              if (_cartList
+                                  .contains(snapshot.data[index].id)) {
+                                return Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 4.0,
+                                          bottom: 4.0,
+                                          left: 8.0),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
+                                        children: <Widget>[
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: <Widget>[
+                                              Text(
+                                                snapshot.data[index].name,
+                                                style: TextStyle(
+                                                    fontSize: 20.0,
+                                                    fontWeight:
+                                                        FontWeight.w300),
+                                              ),
+                                              Text(
+                                                snapshot.data[index]
+                                                    .subcategory,
+                                                style: TextStyle(
+                                                    fontSize: 16.0,
+                                                    fontWeight:
+                                                        FontWeight.w200),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (_showDetailsList
+                                                        .contains(snapshot
+                                                            .data[index]
+                                                            .id)) {
+                                                      _showDetailsList
+                                                          .remove(snapshot
+                                                              .data[index]
+                                                              .id);
+                                                    } else {
+                                                      _showDetailsList
+                                                          .add(snapshot
+                                                              .data[index]
+                                                              .id);
+                                                    }
+                                                  });
+                                                },
+                                                child: Container(
+                                                  child: Row(
+                                                    children: <Widget>[
+                                                      Text("See details"),
+                                                      (_showDetailsList
+                                                              .contains(snapshot
+                                                                  .data[
+                                                                      index]
+                                                                  .id))
+                                                          ? Icon(Icons
+                                                              .arrow_drop_up)
+                                                          : Icon(Icons
+                                                              .arrow_drop_down)
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              (_showDetailsList.contains(
+                                                      snapshot.data[index]
+                                                          .id))
+                                                  ? Container(
+                                                      width: MediaQuery.of(
+                                                                  context)
+                                                              .size
+                                                              .width *
+                                                          0.50,
+                                                      child: Text(
+                                                        snapshot
+                                                            .data[index]
+                                                            .description,
+                                                        style: TextStyle(
+                                                            fontSize:
+                                                                14.0,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w300),
+                                                      ),
+                                                    )
+                                                  : new Container(),
+                                            ],
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.end,
+                                            children: <Widget>[
+                                              Row(
+                                                children: <Widget>[
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsets
+                                                                .only(
+                                                            right: 4.0),
+                                                    child: Text(
+                                                      "₹" +
+                                                          " " +
+                                                          snapshot
+                                                              .data[index]
+                                                              .price
+                                                              .toString(),
+                                                      style: TextStyle(
+                                                          fontSize: 14.0,
+                                                          fontWeight:
+                                                              FontWeight
+                                                                  .w400),
+                                                      textAlign:
+                                                          TextAlign.right,
+                                                    ),
+                                                  ),
+                                                  IconButton(
+                                                    icon: Icon(
+                                                        Icons.delete),
+                                                    color: Colors.red,
+                                                    onPressed: () {
+                                                      _showDeleteConfirmationDialog(
+                                                          snapshot
+                                                              .data[index]
+                                                              .id,
+                                                          snapshot.data);
+                                                    },
+                                                  )
+                                                ],
+                                              ),
+                                            ],
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                    new Divider()
+                                  ],
+                                );
+                              }
+                            },
+                          );
+                        } else if (snapshot.hasError) {
+                          return new Center(
+                            child: new Text('Error: ${snapshot.error}'),
+                          );
+                        }
+                        return Center(
+                          child: new CircularProgressIndicator(
+                              valueColor:
+                                  new AlwaysStoppedAnimation<Color>(
+                                      Color(0xffff7100))),
+                        );
+                      },
                     ),
                   )
         )
