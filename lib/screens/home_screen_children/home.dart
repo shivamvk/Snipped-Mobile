@@ -108,6 +108,15 @@ class _ChildHomeState extends State<ChildHome>{
   }
 
   @override
+  void initState() {
+    getCartPreferences()
+        .then((value){
+      cart = value.split(",");
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       child: Container(
@@ -159,7 +168,7 @@ class _ChildHomeState extends State<ChildHome>{
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: Container(
-                      height: 200.0,
+                      height: 135.0,
                       child: FutureBuilder(
                         future: _getTrendingServices(),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -177,28 +186,74 @@ class _ChildHomeState extends State<ChildHome>{
                                     width: MediaQuery.of(context).size.width * 0.70,
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: <Widget>[
-                                          Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                          Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              Text(
-                                                snapshot.data[index].name,
-                                                style: TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.w300
-                                                ),
+                                              Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Text(
+                                                    snapshot.data[index].name,
+                                                    style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontWeight: FontWeight.w300
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    snapshot.data[index].subcategory,
+                                                    style: TextStyle(
+                                                      fontSize: 16.0,
+                                                      fontWeight: FontWeight.w200
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              Text(
-                                                snapshot.data[index].subcategory,
-                                                style: TextStyle(
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w200
-                                                ),
-                                              ),
-                                              Container(
-                                                width: MediaQuery.of(context).size.width * 0.40,
+                                              Column(
+                                                children: <Widget>[
+                                                  GestureDetector(
+                                                    onTap: (){
+                                                      setState(() {
+                                                        if(cart.contains(snapshot.data[index].id)){
+                                                          cart.remove(snapshot.data[index].id);
+                                                          //0 means remove this id from cart shared prefs
+                                                          _updateCartSharedPref(snapshot.data[index].id, 0);
+                                                        } else {
+                                                          cart.add(snapshot.data[index].id);
+                                                          //1 means add this id to cart shared prefs
+                                                          _updateCartSharedPref(snapshot.data[index].id, 1);
+                                                        }
+                                                      });
+                                                    },
+                                                    child: Row(
+                                                      children: <Widget>[
+                                                        Padding(
+                                                          padding: const EdgeInsets.only(right: 4.0),
+                                                          child: Text(
+                                                            "₹" + " "  + snapshot.data[index].price.toString(),
+                                                            style: TextStyle(
+                                                                fontSize: 14.0,
+                                                                fontWeight: FontWeight.w400
+                                                            ),
+                                                            textAlign: TextAlign.right,
+                                                          ),
+                                                        ),
+                                                        (cart.contains(snapshot.data[index].id))?
+                                                        _iconAddedToCart : _iconAddToCart,
+                                                      ],
+                                                    ),
+                                                  ),
+                                                  (cart.contains(snapshot.data[index].id))?
+                                                  _textAddedToCart : _textAddToCart
+                                                ],
+                                              )
+                                            ],
+                                          ),
+                                          Padding(padding: EdgeInsets.only(top: 8.0)),
+                                          Container(
+                                            width: MediaQuery.of(context).size.width * 0.70,
                                                 child: Text(
                                                   snapshot.data[index].description,
                                                   style: TextStyle(
@@ -206,46 +261,6 @@ class _ChildHomeState extends State<ChildHome>{
                                                     fontWeight: FontWeight.w300
                                                   ),
                                                 )
-                                              )
-                                            ],
-                                          ),
-                                          Column(
-                                            children: <Widget>[
-                                              GestureDetector(
-                                                onTap: (){
-                                                  setState(() {
-                                                    if(cart.contains(snapshot.data[index].id)){
-                                                      cart.remove(snapshot.data[index].id);
-                                                      //0 means remove this id from cart shared prefs
-                                                      _updateCartSharedPref(snapshot.data[index].id, 0);
-                                                    } else {
-                                                      cart.add(snapshot.data[index].id);
-                                                      //1 means add this id to cart shared prefs
-                                                      _updateCartSharedPref(snapshot.data[index].id, 1);
-                                                    }
-                                                  });
-                                                },
-                                                child: Row(
-                                                  children: <Widget>[
-                                                    Padding(
-                                                      padding: const EdgeInsets.only(right: 4.0),
-                                                      child: Text(
-                                                        "₹" + " "  + snapshot.data[index].price.toString(),
-                                                        style: TextStyle(
-                                                            fontSize: 14.0,
-                                                            fontWeight: FontWeight.w400
-                                                        ),
-                                                        textAlign: TextAlign.right,
-                                                      ),
-                                                    ),
-                                                    (cart.contains(snapshot.data[index].id))?
-                                                    _iconAddedToCart : _iconAddToCart,
-                                                  ],
-                                                ),
-                                              ),
-                                              (cart.contains(snapshot.data[index].id))?
-                                              _textAddedToCart : _textAddToCart
-                                            ],
                                           )
                                         ],
                                       ),

@@ -13,6 +13,7 @@ class Order{
   final String appointmentTime;
   final String status;
   final String remarks;
+  final String coupon;
 
   Order({
     this.id,
@@ -25,7 +26,8 @@ class Order{
     this.appointmentDate,
     this.appointmentTime,
     this.status,
-    this.remarks
+    this.remarks,
+    this.coupon
   });
 
   factory Order.fromJson(Map<String, dynamic> parsedJson){
@@ -44,7 +46,8 @@ class Order{
      appointmentDate: parsedJson['appointmentDate'],
      appointmentTime: parsedJson['appointmentTime'],
      status: parsedJson['status'],
-     remarks: parsedJson['remarks']
+     remarks: parsedJson['remarks'],
+     coupon: parsedJson['coupon']
    );
   }
 }

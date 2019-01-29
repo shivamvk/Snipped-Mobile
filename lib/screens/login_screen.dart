@@ -164,6 +164,7 @@ class _LoginScreenState extends State<LoginScreen>{
 
     final PhoneVerificationFailed verificationFailed = (AuthException e) {
       setState(() {
+        _updateRefreshing(false);
         _buttonText = e.toString();
       });
     };

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:carousel_pro/carousel_pro.dart';
+import 'orders_screen.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -10,7 +10,6 @@ import 'package:http/http.dart' as http;
 
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
-import 'home_screen_children/orders.dart';
 import 'home_screen_children/faq.dart';
 import 'cart_screen.dart';
 import 'package:snipped/models/Order.dart';
@@ -37,10 +36,6 @@ final List<Widget> _drawerChildren = [
   new Container(
     color: Colors.white,
     child: new ChildHome(),
-  ),
-  new Container(
-    color: Colors.white,
-    child: new ChildOrders(),
   ),
   new Container(
     color: Colors.white,
@@ -231,13 +226,14 @@ class _HomeScreenState extends State<HomeScreen> {
         });
         break;
       case "orders":
-        setState(() {
-          _currentIndex = 1;
-        });
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => OrdersScreen()),
+          );
         break;
       case "faq":
         setState(() {
-          _currentIndex = 2;
+          _currentIndex = 1;
         });
         break;
       case "logout":

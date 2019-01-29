@@ -183,7 +183,8 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       "appointmentDate" : _date.day.toString() + "-" + _date.month.toString() + "-" + _date.year.toString(),
       "appointmentTime" : _time.hour.toString() + ":" + _time.minute.toString(),
       "status" : "Pending",
-      "remarks" : remarks
+      "remarks" : remarks,
+      "coupon" : "-----"
     };
 
     String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order";
