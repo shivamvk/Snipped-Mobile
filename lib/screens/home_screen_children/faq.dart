@@ -66,12 +66,15 @@ class _ChildFaqState extends State<ChildFaq>{
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                     children: <Widget>[
-                                      Text(
-                                        "Q: " + snapshot.data[index].ques,
-                                        style: TextStyle(
-                                          fontSize: 18.0,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.black
+                                      Container(
+                                        width: MediaQuery.of(context).size.width * 0.90,
+                                        child: Text(
+                                          "Q: " + snapshot.data[index].ques,
+                                          style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.black
+                                          ),
                                         ),
                                       ),
                                       (list.contains(snapshot.data[index].id))?

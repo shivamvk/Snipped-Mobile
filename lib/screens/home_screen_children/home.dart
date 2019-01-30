@@ -341,7 +341,7 @@ class _ChildHomeState extends State<ChildHome>{
                                     width: MediaQuery.of(context).size.width * 0.43,
                                     child: Center(
                                         child: new Image.asset(
-                                          "images/hair.jpg",
+                                          "images/hairHomeScreen.jpg",
                                         )
                                     )
                                 ),
@@ -366,7 +366,7 @@ class _ChildHomeState extends State<ChildHome>{
                                     width: MediaQuery.of(context).size.width * 0.43,
                                     child: Center(
                                         child: new Image.asset(
-                                          "images/facial.jpg",
+                                          "images/hairHomeScreen.jpg",
                                         )
                                     )
                                 ),
@@ -396,7 +396,7 @@ class _ChildHomeState extends State<ChildHome>{
                                     width: MediaQuery.of(context).size.width * 0.43,
                                     child: Center(
                                         child: new Image.asset(
-                                            "images/makeup.jpg"
+                                            "images/makeupHomeScreen.jpg"
                                         )
                                     )
                                 ),
@@ -421,7 +421,7 @@ class _ChildHomeState extends State<ChildHome>{
                                   width: MediaQuery.of(context).size.width * 0.43,
                                   child: Center(
                                       child: new Image.asset(
-                                          "images/facial.jpg"
+                                          "images/waxingHomeScreen.jpg"
                                       )
                                   ),
                                 ),
