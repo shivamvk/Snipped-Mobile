@@ -55,6 +55,7 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                     children: <Widget>[
                       Text(
                         "You don't have any upcoming orders!",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 22.0,
                             fontWeight: FontWeight.w600
@@ -78,7 +79,9 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.90,
-                  height: snapshot.data[index].services.length * 35.0 + 200.0,
+                  height: (strDate == snapshot.data[index].appointmentDate)?
+                  snapshot.data[index].services.length * 35.0 + 210.0 :
+                  snapshot.data[index].services.length * 35.0 + 257.0,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 4.0, right: 4.0),
                     child: Card(
@@ -160,6 +163,26 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
                                       Text(
+                                        "Appointment : ",
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Text(
+                                        snapshot.data[index].appointmentDate + ", " + snapshot.data[index].appointmentTime,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 8.0)),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(
                                         "Coupon code : ",
                                         style: TextStyle(
                                           fontSize: 16.0,
@@ -222,7 +245,8 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                     color: Colors.grey[200],
                                     margin: EdgeInsets.only(left: 8.0, right: 8.0),
                                   ),
-                                  (strDate == snapshot.data[index].appointmentDate)?
+                                  (strDate == snapshot.data[index].appointmentDate
+                                  || (snapshot.data[index].status == "Cancelled"))?
                                   Column(
                                     children: <Widget>[
                                       Icon(
@@ -282,6 +306,27 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                       : new Container() ,
                                 ],
                               )
+                          ),
+                          (strDate == snapshot.data[index].appointmentDate)?
+                          new Container()
+                              : Container(
+                            width: MediaQuery.of(context).size.width,
+                            child: RaisedButton(
+                              onPressed: (){
+
+                              },
+                              color: Color(0xff073848),
+                              textColor: Colors.white,
+                              child: Padding(
+                                padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
+                                child: Text(
+                                  "CANCEL ORDER",
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ),
+                            ),
                           )
                         ],
                       ),

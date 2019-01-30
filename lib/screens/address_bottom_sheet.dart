@@ -6,6 +6,7 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 import 'order_placed_screen.dart';
@@ -52,7 +53,6 @@ String _phone;
 String _cart;
 
 final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-
 
 class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
@@ -247,26 +247,26 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
   }
 
   bool _validateTime(){
-    if(_time.hour < 11){
+    if(_time.hour < 12){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service before 11 a.m!";
+        _timeErrorText = "We currently don't service before 12 a.m!";
       });
       return false;
     }
-    if(_time.hour == 19){
+    if(_time.hour == 17){
       if(_time.minute != 0){
         setState(() {
           _timeError = true;
-          _timeErrorText = "We currently don't service after 7 p.m!";
+          _timeErrorText = "We currently don't service after 5 p.m!";
         });
         return false;
       }
     }
-    if(_time.hour > 19){
+    if(_time.hour > 17){
       setState(() {
         _timeError = true;
-        _timeErrorText = "We currently don't service after 7 p.m!";
+        _timeErrorText = "We currently don't service after 5 p.m!";
       });
       return false;
     }
@@ -285,9 +285,13 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
   bool _validateDate(){
     var currentDate = DateTime.now();
-    var twoDaysFromNow = currentDate.add(Duration(days: 2));
+    var tommorow = currentDate.add(Duration(days: 1));
     if(currentDate.day == _date.day && currentDate.month == _date.month && currentDate.year == _date.year){
-      return true;
+      setState(() {
+        _dateError = true;
+        _dateErrorText = "You can't book for the same day! We need atleast a day to be ready.";
+      });
+      return false;
     }
     if(_date.isBefore(currentDate)){
       setState(() {
@@ -296,13 +300,16 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       });
       return false;
     }
-    if(_date.isAfter(twoDaysFromNow)){
-      setState(() {
-        _dateError = true;
-        _dateErrorText = "Advanced booking allowed only before 2 days of service!";
-      });
-      return false;
+    if(_date.day == tommorow.day && _date.month == tommorow.month && _date.year == tommorow.year){
+      if(currentDate.hour > 17){
+        setState(() {
+          _dateError = true;
+          _dateErrorText = "Bookings for next day need to booked atleast before 5:00 p.m!";
+        });
+        return false;
+      }
     }
+
     return true;
   }
 
@@ -349,6 +356,8 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
         _cart = value;
     });
 
+    _cityController.text = "Lucknow";
+
     super.initState();
   }
 
@@ -388,9 +397,15 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
               ),
               controller: _pinCodeController,
               onChanged: (value){
-                setState(() {
-                  _pinCodeError = false;
-                });
+                if(value.length != 6){
+                  setState(() {
+                    _pinCodeError = true;
+                  });
+                } else if(value.length == 6) {
+                  setState(() {
+                    _pinCodeError = false;
+                  });
+                }
               },
             ),
             TextField(
@@ -436,13 +451,17 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
               },
             ),
             TextField(
+              enabled: false,
               decoration: InputDecoration(
                 labelText: "City",
                 labelStyle: new TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w300
                 ),
-                errorText: _cityError? "This field is required!" : null
+                errorText: "Currently we serve only in Lucknow!",
+                errorStyle: TextStyle(
+                  color: Color(0xffff7100)
+                )
               ),
               keyboardType: TextInputType.text,
               cursorColor: new Color(0xffff7100),
@@ -461,7 +480,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
               inputType: InputType.date,
               editable: false,
               decoration: InputDecoration(
-                labelText: "Apoointment date",
+                labelText: "Appointment date",
                 labelStyle: new TextStyle(
                   color: Colors.black,
                   fontWeight: FontWeight.w300,

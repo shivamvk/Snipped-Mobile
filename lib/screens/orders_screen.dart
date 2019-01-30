@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
+import 'order_screen_children/todays_orders.dart';
 import 'order_screen_children/all_orders.dart';
 import 'order_screen_children/upcoming_orders.dart';
 import 'order_screen_children/past_orders.dart';
@@ -21,7 +23,7 @@ class _OrderScreenState extends State<OrdersScreen>{
         );
       },
       child: DefaultTabController(
-        length: 3,
+        length: 4,
         child: Scaffold(
           appBar: AppBar(
             title: Text("Orders"),
@@ -39,14 +41,16 @@ class _OrderScreenState extends State<OrdersScreen>{
               indicatorColor: Color(0xffff7100),
               tabs: <Widget>[
                 Tab(text: "All",),
+                Tab(text: "Today's",),
                 Tab(text: "Upcoming",),
-                Tab(text: "Past",)
+                Tab(text: "Past",),
               ],
             ),
           ),
           body: TabBarView(
             children: <Widget>[
               AllOrders(),
+              TodaysScreen(),
               UpcomingOrders(),
               PastOrders()
             ],

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
+import 'orders_screen.dart';
 
 import 'home_screen.dart';
 
@@ -248,7 +248,12 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                   child: Column(
                     children: <Widget>[
                       RaisedButton(
-                        onPressed: (){},
+                        onPressed: (){
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => OrdersScreen()),
+                          );
+                        },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
                         color: Color(0xff073848),
                         elevation: 10.0,

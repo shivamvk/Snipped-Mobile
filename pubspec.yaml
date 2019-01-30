@@ -7,7 +7,7 @@ description: A new Flutter application.
 # Both the version and the builder number may be overridden in flutter
 # build by specifying --build-name and --build-number, respectively.
 # Read more about versioning at semver.org.
-version: 1.0.0+2
+version: 1.0.0+3
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -30,6 +30,7 @@ dependencies:
   flutter_local_notifications: ^0.4.4+2
   datetime_picker_formfield: ^0.1.8
   url_launcher: ^4.2.0+1
+  flutter_google_places: ^0.1.4+1
 
 
 

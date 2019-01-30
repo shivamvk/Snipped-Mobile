@@ -55,6 +55,7 @@ class _PastOrdersState extends State<PastOrders>{
                     children: <Widget>[
                       Text(
                         "You don't have any completed orders!",
+                        textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 22.0,
                             fontWeight: FontWeight.w600
@@ -78,7 +79,7 @@ class _PastOrdersState extends State<PastOrders>{
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.90,
-                  height: snapshot.data[index].services.length * 35.0 + 200.0,
+                  height: snapshot.data[index].services.length * 35.0 + 210.0,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 4.0, right: 4.0),
                     child: Card(
@@ -156,6 +157,26 @@ class _PastOrdersState extends State<PastOrders>{
                             child: Container(
                               child: Column(
                                 children: <Widget>[
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(
+                                        "Appointment : ",
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                      Text(
+                                        snapshot.data[index].appointmentDate + ", " + snapshot.data[index].appointmentTime,
+                                        style: TextStyle(
+                                          fontSize: 16.0,
+                                          fontWeight: FontWeight.w400,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Padding(padding: EdgeInsets.only(top: 8.0)),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[

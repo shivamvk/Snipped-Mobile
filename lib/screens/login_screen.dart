@@ -203,6 +203,7 @@ class _LoginScreenState extends State<LoginScreen>{
                     style: new TextStyle(
                         color: Colors.white
                     ),
+                    enabled: (_phoneNumberEntered)? false : true,
                     onChanged: (value) =>_setPhoneError(false),
                     decoration: new InputDecoration(
                         labelText: "Enter your phone number",

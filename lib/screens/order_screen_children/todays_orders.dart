@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:http/http.dart' as http;
-import 'package:snipped/screens/orders_screen.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 import 'package:snipped/models/Order.dart';
 
-class AllOrders extends StatefulWidget {
+class TodaysScreen extends StatefulWidget{
   @override
-  _AllOrdersState createState() => _AllOrdersState();
+  _TodaysScreenState createState() => _TodaysScreenState();
 }
 
 String _phone;
 DateTime _date;
 String strDate;
 
-class _AllOrdersState extends State<AllOrders> {
+class _TodaysScreenState extends State<TodaysScreen>{
+
   @override
   void initState() {
     getPhonePreferences().then((value) {
@@ -31,72 +31,20 @@ class _AllOrdersState extends State<AllOrders> {
     return prefs.getString("userPhone") ?? "";
   }
 
-  Future<List<Order>> _getAllOrders() async {
+  Future<List<Order>> _getTodaysOrders() async {
     print("url called 2 is ${(_phone)}");
     String url =
-        "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/" + _phone;
+        "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/" + _phone + "/date/" + strDate;
     var data = await http.get(url);
     Response response = Response.fromJson(json.decode(data.body));
     return response.orders;
-  }
-
-  _cancelOrderDialog(value){
-    bool refreshing = false;
-    AlertDialog _deleteDialog = new AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
-      contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
-      title: Text("Are you sure you want to cancel this order?"),
-      actions: <Widget>[
-        FlatButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          child: Text("Cancel"),
-        ),
-        FlatButton(
-          onPressed: () {
-            setState(() {
-              refreshing = true;
-            });
-            _cancelOrder(value)
-              .then((bool){
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => OrdersScreen()));
-            });
-          },
-          child: Text("Yeah"),
-        )
-      ],
-    );
-
-    showDialog(
-        context: context,
-        builder: (BuildContext context) =>
-        (refreshing)?
-        Container(
-          child: Dialog(
-            child: CircularProgressIndicator(
-              valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100)),
-            ),
-          )
-        )
-            :
-            _deleteDialog
-    );
-  }
-
-  Future<bool> _cancelOrder(value) async{
-    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/cancel/" + value;
-    var data = await http.get(url);
-    return true;
   }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: FutureBuilder(
-        future: _getAllOrders(),
+        future: _getTodaysOrders(),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             if(snapshot.data.length == 0){
@@ -107,7 +55,7 @@ class _AllOrdersState extends State<AllOrders> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       Text(
-                        "You haven't placed any orders!",
+                        "You don't have any orders booked for today!",
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 22.0,
@@ -115,11 +63,11 @@ class _AllOrdersState extends State<AllOrders> {
                         ),
                       ),
                       Text(
-                        "Place an order and come back here to check the status of your order! ^_^",
+                        "All your appointment for today will be shown here ^_^",
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w300
+                            fontSize: 18.0,
+                            fontWeight: FontWeight.w300
                         ),
                       )
                     ],
@@ -132,10 +80,7 @@ class _AllOrdersState extends State<AllOrders> {
               itemBuilder: (BuildContext context, int index) {
                 return Container(
                   width: MediaQuery.of(context).size.width * 0.90,
-                  height: (strDate == snapshot.data[index].appointmentDate
-                          ||snapshot.data[index].status == "Cancelled")?
-                  snapshot.data[index].services.length * 35.0 + 210.0 :
-                  snapshot.data[index].services.length * 35.0 + 257.0,
+                  height: snapshot.data[index].services.length * 35.0 + 210.0,
                   child: Padding(
                     padding: const EdgeInsets.only(top: 4.0, bottom: 4.0, left: 4.0, right: 4.0),
                     child: Card(
@@ -154,15 +99,15 @@ class _AllOrdersState extends State<AllOrders> {
                                   Text(
                                     "Order id: ",
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w300,
-                                      color: Colors.white
+                                        fontWeight: FontWeight.w300,
+                                        color: Colors.white
                                     ),
                                   ),
                                   Text(
                                     snapshot.data[index].id.toString().substring(12),
                                     style: TextStyle(
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xffff7100)
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xffff7100)
                                     ),
                                   )
                                 ],
@@ -249,7 +194,7 @@ class _AllOrdersState extends State<AllOrders> {
                                           fontSize: 16.0,
                                           fontWeight: FontWeight.w300,
                                         ),
-                                      ),
+                                      )
                                     ],
                                   ),
                                   Padding(padding: EdgeInsets.only(top: 8.0)),
@@ -278,111 +223,88 @@ class _AllOrdersState extends State<AllOrders> {
                           ),
                           Padding(padding: EdgeInsets.only(top: 22.0)),
                           Container(
-                            width: MediaQuery.of(context).size.width * 0.90,
-                            height: 50.0,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              children: <Widget>[
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Color(0xffff7100),
-                                    ),
-                                    Text("Confirmed")
-                                  ],
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * 0.10,
-                                  height: 2.0,
-                                  color: Colors.grey[200],
-                                  margin: EdgeInsets.only(left: 8.0, right: 8.0),
-                                ),
-                                (strDate == snapshot.data[index].appointmentDate
-                                 || (snapshot.data[index].status == "Cancelled"))?
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Color(0xffff7100),
-                                    ),
-                                    Text("Processed")
-                                  ],
-                                )
-                                : Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.watch_later,
-                                      color: Color(0xff073848),
-                                    ),
-                                    Text("Processing")
-                                  ],
-                                ),
-                                Container(
-                                  width: MediaQuery.of(context).size.width * 0.10,
-                                  height: 2.0,
-                                  color: Colors.grey[200],
-                                  margin: EdgeInsets.only(left: 8.0, right: 8.0),
-                                ),
-                                (snapshot.data[index].status == "Completed")?
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.check_circle,
-                                      color: Color(0xffff7100),
-                                    ),
-                                    Text("Completed")
-                                  ],
-                                )
-                                    : new Container() ,
-                                (snapshot.data[index].status == "Pending")?
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.watch_later,
-                                      color:  Color(0xff073848)
-                                    ),
-                                    Text("Completed")
-                                  ],
-                                )
-                                    : new Container() ,
-                                (snapshot.data[index].status == "Cancelled")?
-                                Column(
-                                  children: <Widget>[
-                                    Icon(
-                                      Icons.error,
-                                      color: Colors.red,
-                                    ),
-                                    Text("Cancelled")
-                                  ],
-                                )
-                                    : new Container() ,
-                              ],
-                            )
-                          ),
-                          (strDate == snapshot.data[index].appointmentDate
-                          || snapshot.data[index].status == "Cancelled")?
-                          new Container()
-                          : Container(
-                            width: MediaQuery.of(context).size.width,
-                            child: RaisedButton(
-                              onPressed: (){
-                                _cancelOrderDialog(snapshot.data[index].id);
-                              },
-                              color: Color(0xff073848),
-                              textColor: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
-                                child: Text(
-                                  "CANCEL ORDER",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
+                              width: MediaQuery.of(context).size.width * 0.90,
+                              height: 50.0,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: <Widget>[
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xffff7100),
+                                      ),
+                                      Text("Confirmed")
+                                    ],
                                   ),
-                                ),
-                              ),
-                            ),
-                          )
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * 0.10,
+                                    height: 2.0,
+                                    color: Colors.grey[200],
+                                    margin: EdgeInsets.only(left: 8.0, right: 8.0),
+                                  ),
+                                  (strDate == snapshot.data[index].appointmentDate)?
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xffff7100),
+                                      ),
+                                      Text("Processed")
+                                    ],
+                                  )
+                                      : Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.watch_later,
+                                        color: Color(0xff073848),
+                                      ),
+                                      Text("Processing")
+                                    ],
+                                  ),
+                                  Container(
+                                    width: MediaQuery.of(context).size.width * 0.10,
+                                    height: 2.0,
+                                    color: Colors.grey[200],
+                                    margin: EdgeInsets.only(left: 8.0, right: 8.0),
+                                  ),
+                                  (snapshot.data[index].status == "Completed")?
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.check_circle,
+                                        color: Color(0xffff7100),
+                                      ),
+                                      Text("Completed")
+                                    ],
+                                  )
+                                      : new Container() ,
+                                  (snapshot.data[index].status == "Pending")?
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                          Icons.watch_later,
+                                          color:  Color(0xff073848)
+                                      ),
+                                      Text("Completed")
+                                    ],
+                                  )
+                                      : new Container() ,
+                                  (snapshot.data[index].status == "Cancelled")?
+                                  Column(
+                                    children: <Widget>[
+                                      Icon(
+                                        Icons.error,
+                                        color: Colors.red,
+                                      ),
+                                      Text("Cancelled")
+                                    ],
+                                  )
+                                      : new Container() ,
+                                ],
+                              )
+                          ),
                         ],
                       ),
                     ),
@@ -399,4 +321,5 @@ class _AllOrdersState extends State<AllOrders> {
       ),
     );
   }
+
 }
