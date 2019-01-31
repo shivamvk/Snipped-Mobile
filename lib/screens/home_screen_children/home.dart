@@ -124,28 +124,41 @@ class _ChildHomeState extends State<ChildHome>{
         child: new Column(
           children: <Widget>[
             Container(
+              height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
+              MediaQuery.of(context).size.width * 0.60
+                  : MediaQuery.of(context).size.width * 0.40,
+              width: MediaQuery.of(context).size.width,
               color: Colors.white,
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: new SizedBox(
-                    height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
-                              MediaQuery.of(context).size.height * 0.30
-                              : MediaQuery.of(context).size.height * 0.60,
-                    width: MediaQuery.of(context).size.width,
-                    child: new Carousel(
-                      images: [
-                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
-                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966872/app_slider_2.jpg'),
-                        new NetworkImage('https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg'),
-                      ],
-                      dotSize: 0,
-                      dotBgColor: Colors.white.withOpacity(0.0),
-                      autoplayDuration: Duration(seconds: 6),
-                      animationCurve: Curves.fastOutSlowIn,
-                      borderRadius: true,
-                    )
+              child: Container(
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/slider1.jpg",),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider2.jpg")),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider3.jpg")),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider4.jpg")),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -157,7 +170,7 @@ class _ChildHomeState extends State<ChildHome>{
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      "Trending services",
+                      "Today's special",
                       style: new TextStyle(
                           color: Colors.black,
                           fontSize: 16.0,
@@ -168,7 +181,7 @@ class _ChildHomeState extends State<ChildHome>{
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: Container(
-                      height: 135.0,
+                      height: 60.0,
                       child: FutureBuilder(
                         future: _getTrendingServices(),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -251,17 +264,6 @@ class _ChildHomeState extends State<ChildHome>{
                                               )
                                             ],
                                           ),
-                                          Padding(padding: EdgeInsets.only(top: 8.0)),
-                                          Container(
-                                            width: MediaQuery.of(context).size.width * 0.70,
-                                                child: Text(
-                                                  snapshot.data[index].description,
-                                                  style: TextStyle(
-                                                    fontSize: 14.0,
-                                                    fontWeight: FontWeight.w300
-                                                  ),
-                                                )
-                                          )
                                         ],
                                       ),
                                     ),

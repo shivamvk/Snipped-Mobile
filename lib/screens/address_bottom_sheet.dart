@@ -16,8 +16,9 @@ class AddressBottomSheet extends StatefulWidget{
 
   final int totalValue;
   final List<String> cartList;
+  final String couponCode;
 
-  AddressBottomSheet(this.totalValue, this.cartList);
+  AddressBottomSheet(this.totalValue, this.cartList, this.couponCode);
 
   @override
   _AddressBottomSheetState createState() => _AddressBottomSheetState();
@@ -184,7 +185,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
       "appointmentTime" : _time.hour.toString() + ":" + _time.minute.toString(),
       "status" : "Pending",
       "remarks" : remarks,
-      "coupon" : "-----"
+      "coupon" : (widget.couponCode.isEmpty)? "----" : widget.couponCode
     };
 
     String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order";
@@ -309,6 +310,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
         return false;
       }
     }
+    if(_date.day.toString() == "9")
 
     return true;
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:snipped/screens/orders_screen.dart';
 import 'dart:convert';
 import 'dart:async';
 
@@ -37,6 +38,58 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
     var data = await http.get(url);
     Response response = Response.fromJson(json.decode(data.body));
     return response.orders;
+  }
+
+  _cancelOrderDialog(value){
+    bool refreshing = false;
+    AlertDialog _deleteDialog = new AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24.0)),
+      contentPadding: EdgeInsets.only(top: 10.0, bottom: 10.0),
+      title: Text("Are you sure you want to cancel this order?"),
+      actions: <Widget>[
+        FlatButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text("Cancel"),
+        ),
+        FlatButton(
+          onPressed: () {
+            setState(() {
+              refreshing = true;
+            });
+            _cancelOrder(value)
+                .then((bool){
+              Navigator.pop(context);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (context) => OrdersScreen()));
+            });
+          },
+          child: Text("Yeah"),
+        )
+      ],
+    );
+
+    showDialog(
+        context: context,
+        builder: (BuildContext context) =>
+        (refreshing)?
+        Container(
+            child: Dialog(
+              child: CircularProgressIndicator(
+                valueColor: new AlwaysStoppedAnimation<Color>(Color(0xffff7100)),
+              ),
+            )
+        )
+            :
+        _deleteDialog
+    );
+  }
+
+  Future<bool> _cancelOrder(value) async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/cancel/" + value;
+    var data = await http.get(url);
+    return true;
   }
 
   @override
@@ -307,13 +360,14 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                 ],
                               )
                           ),
-                          (strDate == snapshot.data[index].appointmentDate)?
+                          (strDate == snapshot.data[index].appointmentDate
+                              || snapshot.data[index].status == "Cancelled")?
                           new Container()
                               : Container(
                             width: MediaQuery.of(context).size.width,
                             child: RaisedButton(
                               onPressed: (){
-
+                                _cancelOrderDialog(snapshot.data[index].id);
                               },
                               color: Color(0xff073848),
                               textColor: Colors.white,

@@ -18,6 +18,9 @@ String _cartPrefString;
 String _proceedBtnText = "";
 final _couponController = new TextEditingController();
 int _total = 0;
+int _discount = 0;
+bool _couponError = false;
+String _couponErrorText = "";
 
 Future<String> getCartPreferences() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -30,6 +33,12 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
+
+    _couponError = false;
+    _couponErrorText = "";
+    _couponController.text = "";
+    _discount = 0;
+
     getCartPreferences().then((value) {
       setState(() {
         _cartPrefString = value;
@@ -58,7 +67,7 @@ class _CartScreenState extends State<CartScreen> {
           return new Container(
             color: Colors.grey[300],
             height: MediaQuery.of(context).size.height * 0.75,
-            child: new AddressBottomSheet(_total, _cartList),
+            child: new AddressBottomSheet(_total, _cartList, _couponController.text),
           );
         })
         .closed
@@ -88,8 +97,8 @@ class _CartScreenState extends State<CartScreen> {
     list.add(Service());
 
     setState(() {
-      _total = total;
-      _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
+      _total = total - _discount;
+      _proceedBtnText = "Proceed (Total : ₹ " + _total.toString() + ")";
     });
     return list;
   }
@@ -102,8 +111,8 @@ class _CartScreenState extends State<CartScreen> {
       }
     }
     setState(() {
-      _total = total;
-      _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
+      _total = total - _discount;
+      _proceedBtnText = "Proceed (Total : ₹ " + _total.toString() + ")";
     });
   }
 
@@ -127,17 +136,20 @@ class _CartScreenState extends State<CartScreen> {
 
   _validateCouponCode() {
     String string = _couponController.text.toLowerCase();
-    if (string == "new50") {
-      int total = _total;
-      if (total / 2 <= 100) {
-        total = total - (total / 2).toInt();
-      } else {
-        total = total - 100;
-      }
+    if (string == "new15") {
       setState(() {
-        _total = total;
-        _proceedBtnText = "Proceed (Total : ₹ " + total.toString() + ")";
+        _couponError = true;
+        _couponErrorText = "Coupon applied successfully!";
       });
+      if ((15.0 * (_total/100)) <= 100) {
+        setState(() {
+          _discount = (15.0 * (_total / 100)).toInt();
+        });
+      } else {
+        setState(() {
+          _discount = 100;
+        });
+      }
     }
   }
 
@@ -235,13 +247,36 @@ class _CartScreenState extends State<CartScreen> {
                                     decoration: InputDecoration(
                                         labelText: "Have a coupon code?",
                                         border: OutlineInputBorder(),
-                                        suffix: GestureDetector(
+                                        errorText: _couponError? _couponErrorText : null,
+                                        errorStyle: TextStyle(
+                                          color: Color(0xff073848)
+                                        ),
+                                        suffix: (_discount == 0)?
+                                        GestureDetector(
                                           onTap: () => _validateCouponCode(),
                                           child: Icon(
                                             Icons.send,
                                             color: Colors.green,
                                           ),
-                                        )),
+                                        )
+                                            :
+                                        new Container(
+                                          child: GestureDetector(
+                                            onTap: (){
+                                              setState(() {
+                                                _discount = 0;
+                                                _couponController.text = "";
+                                                _couponError = true;
+                                                _couponErrorText = "Coupon removed successfully!";
+                                              });
+                                            },
+                                            child: Icon(
+                                              Icons.clear,
+                                              color: Colors.red,
+                                            ),
+                                          ),
+                                        )
+                                    ),
                                     cursorColor: Color(0xffff7100),
                                     textCapitalization:
                                     TextCapitalization.characters,
