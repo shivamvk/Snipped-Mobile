@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:progress_hud/progress_hud.dart';
 
 import 'home_screen.dart';
 import 'package:snipped/models/Service.dart';
 import 'address_bottom_sheet.dart';
+import 'package:snipped/models/Order.dart';
 
 class CartScreen extends StatefulWidget {
   @override
@@ -22,10 +24,9 @@ int _discount = 0;
 bool _couponError = false;
 String _couponErrorText = "";
 
-Future<String> getCartPreferences() async {
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getString("cart") ?? "";
-}
+ProgressHUD _progressHUD;
+bool _loading = false;
+List<Order> _orders;
 
 class _CartScreenState extends State<CartScreen> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -33,6 +34,15 @@ class _CartScreenState extends State<CartScreen> {
 
   @override
   void initState() {
+
+    _loading = false;
+
+    _progressHUD = new ProgressHUD(
+      backgroundColor: Colors.black12,
+      color: Color(0xffff7100),
+      containerColor: Color(0xff073848),
+      borderRadius: 5.0,
+    );
 
     _couponError = false;
     _couponErrorText = "";
@@ -52,9 +62,27 @@ class _CartScreenState extends State<CartScreen> {
       });
     });
 
+    getPhonePreferences()
+      .then((value){
+        _getOrdersList(value)
+            .then((orders){
+              _orders = orders;
+        });
+    });
+
     _showPersBottomSheetCallback = _showAddressBottomSheet;
 
     super.initState();
+  }
+
+  Future<String> getCartPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("cart") ?? "";
+  }
+
+  Future<String> getPhonePreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("userPhone") ?? "";
   }
 
   void _showAddressBottomSheet() {
@@ -85,7 +113,7 @@ class _CartScreenState extends State<CartScreen> {
         _cartPrefString;
     var data = await http.get(url);
 
-    Response response = Response.fromJson(json.decode(data.body));
+    ServiceResponse response = ServiceResponse.fromJson(json.decode(data.body));
 
     List<Service> list = response.services;
     int total = 0;
@@ -136,6 +164,13 @@ class _CartScreenState extends State<CartScreen> {
 
   _validateCouponCode() {
     String string = _couponController.text.toLowerCase();
+    if(_orders.length != 0 && string == "new15"){
+      setState(() {
+        _couponError = true;
+        _couponErrorText = "This coupon is valid only on first order!";
+      });
+      return;
+    }
     if (string == "new15") {
       setState(() {
         _couponError = true;
@@ -150,7 +185,18 @@ class _CartScreenState extends State<CartScreen> {
           _discount = 100;
         });
       }
+    } else{
+      _couponError = true;
+      _couponErrorText = "Invalid coupon!";
     }
+  }
+
+  Future<List<Order>> _getOrdersList(_phone) async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/" + _phone;
+    var data = await http.get(url);
+
+    Response response = Response.fromJson(json.decode(data.body));
+    return response.orders;
   }
 
   _showDeleteConfirmationDialog(value, list) {
@@ -230,7 +276,9 @@ class _CartScreenState extends State<CartScreen> {
                         )
                     ),
                   )
-                : Center(
+                : (_loading)?
+                  _progressHUD
+                  :Center(
                     child: FutureBuilder(
                       future: _getCartItemsById(),
                       builder:
@@ -244,6 +292,11 @@ class _CartScreenState extends State<CartScreen> {
                                 return Padding(
                                   padding: EdgeInsets.all(8.0),
                                   child: TextField(
+                                    onChanged: (value){
+                                      _couponError = false;
+                                      _couponErrorText = "";
+                                    },
+                                    enabled: (_couponErrorText == "Coupon applied successfully!")? false : true,
                                     decoration: InputDecoration(
                                         labelText: "Have a coupon code?",
                                         border: OutlineInputBorder(),

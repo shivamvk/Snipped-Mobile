@@ -17,6 +17,7 @@ class ChildHome extends StatefulWidget{
 }
 
 String _serviceName = "";
+String _gender = "";
 
 class _ChildHomeState extends State<ChildHome>{
 
@@ -94,6 +95,7 @@ class _ChildHomeState extends State<ChildHome>{
     Navigator.pop(context);
     setState(() {
       _serviceName = value;
+      _gender = gender;
     });
     Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChildServices()));
     return prefs.commit();
@@ -103,7 +105,7 @@ class _ChildHomeState extends State<ChildHome>{
     String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/trending";
     var data = await http.get(url);
 
-    Response response = Response.fromJson(json.decode(data.body));
+    ServiceResponse response = ServiceResponse.fromJson(json.decode(data.body));
     return response.services;
   }
 
@@ -137,26 +139,32 @@ class _ChildHomeState extends State<ChildHome>{
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/slider1.jpg",),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/Fslider1.jpg",),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider2.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider2.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider3.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider3.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/slider4.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider4.jpg")),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(8.0),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider5.jpg")),
                     ),
                   ],
                 ),
@@ -506,13 +514,15 @@ List<String> cart = new List();
 String _cartPrefString = "";
 List<String> list = new List();
 
-Future<Response> _getServicesList() async{
+Future<ServiceResponse> _getServicesList() async{
   String url =
-      "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/service/" + _serviceName.toLowerCase();
+      "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/service/" + _serviceName.toLowerCase() + "/gender/" + _gender;
+
+  print("url service is ${(url)}");
 
   var data = await http.get(url);
 
-  return Response.fromJson(json.decode(data.body));
+  return ServiceResponse.fromJson(json.decode(data.body));
 }
 
 //value is the id of the service to be removed

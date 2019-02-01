@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 
-class Response{
+class ServiceResponse{
   final int status;
   final List<Service> services;
   final String message;
 
-  Response({
+  ServiceResponse({
     this.status,
     this.services,
     this.message
   });
 
-  factory Response.fromJson(Map<String, dynamic> parsedJson){
+  factory ServiceResponse.fromJson(Map<String, dynamic> parsedJson){
 
     var list = parsedJson['data'] as List;
     List<Service> servicesList = list.map((i) => Service.fromJson(i)).toList();
 
-    return Response(
+    return ServiceResponse(
         status: parsedJson['status'],
         services: servicesList,
         message: parsedJson['message']
