@@ -59,7 +59,7 @@ class _ChildHomeState extends State<ChildHome>{
                 GestureDetector(
                   onTap: () => savePreferences("male", value),
                   child: new Image.asset(
-                    "images/bluemale.png",
+                    "images/gendermale.png",
                     width: 100,
                     height: 100,
                   ),
@@ -67,7 +67,7 @@ class _ChildHomeState extends State<ChildHome>{
                 GestureDetector(
                   onTap: () => savePreferences("female", value),
                   child: new Image.asset(
-                    "images/pinkfemale.png",
+                    "images/genderfemale.png",
                     width: 100,
                     height: 100,
                   ),
@@ -139,32 +139,32 @@ class _ChildHomeState extends State<ChildHome>{
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/Fslider1.jpg",),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/poster1.jpg",),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider2.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster2.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider3.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster3.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider4.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster4.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/Fslider5.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster5.jpg")),
                     ),
                   ],
                 ),
@@ -180,16 +180,17 @@ class _ChildHomeState extends State<ChildHome>{
                     child: Text(
                       "Today's special",
                       style: new TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'DancingScript',
                       ),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: Container(
-                      height: 60.0,
+                      height: 80.0,
                       child: FutureBuilder(
                         future: _getTrendingServices(),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -230,6 +231,9 @@ class _ChildHomeState extends State<ChildHome>{
                                                       fontWeight: FontWeight.w200
                                                     ),
                                                   ),
+                                                  Text(
+                                                    "(" + snapshot.data[index].gender + ")",
+                                                  )
                                                 ],
                                               ),
                                               Column(
@@ -303,15 +307,15 @@ class _ChildHomeState extends State<ChildHome>{
                         children: <Widget>[
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter1.jpg"),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter2.jpg"),
                           ),
                           Padding(
                             padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/app_slider_1.jpg"),
+                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter3.jpg"),
                           ),
                         ],
                       ),
@@ -330,9 +334,10 @@ class _ChildHomeState extends State<ChildHome>{
                     child: new Text(
                       "Categories",
                       style: new TextStyle(
-                          color: Colors.black,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w400
+                        color: Colors.black,
+                        fontSize: 20.0,
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'DancingScript',
                       ),
                     ),
                   ),
@@ -376,7 +381,7 @@ class _ChildHomeState extends State<ChildHome>{
                                     width: MediaQuery.of(context).size.width * 0.43,
                                     child: Center(
                                         child: new Image.asset(
-                                          "images/hairHomeScreen.jpg",
+                                          "images/beautyHomeScreen.jpeg",
                                         )
                                     )
                                 ),
@@ -452,22 +457,45 @@ class _ChildHomeState extends State<ChildHome>{
             new Container(
               height: 150.0,
               width: MediaQuery.of(context).size.width,
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
+                  Container(
+                    height: 50.0,
+                    child: Image.asset("images/brandlogoscissors.png")
+                  ),
+                  Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
-                      Text("Made with "),
-                      Icon(
-                        Icons.favorite,
-                        color: Colors.red,
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Made with ",
+                            style: TextStyle(
+                              fontFamily: 'Pacifico',
+                              fontSize: 20.0,
+                            ),
+                          ),
+                          Icon(
+                            Icons.favorite,
+                            color: Colors.red,
+                          ),
+                        ],
                       ),
+                      Text(
+                        "for Beauty Enthusiats.",
+                        style: TextStyle(
+                            fontFamily: 'Pacifico',
+                          fontSize: 22.0
+                        ),
+                      )
                     ],
                   ),
-                  Text(
-                    "for Beauty Enthusiats."
-                  )
+                  Container(
+                      height: 50.0,
+                      child: Image.asset("images/brandlogoscissors.png")
+                  ),
                 ],
               ),
             )
@@ -565,6 +593,7 @@ class _ChildServicesState extends State<ChildServices>{
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
       },
       child: Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: new Text(_serviceName + " Services"),
           centerTitle: true,
@@ -586,6 +615,11 @@ class _ChildServicesState extends State<ChildServices>{
                         future: _getServicesList(),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
                           if(snapshot.hasData){
+                            if(snapshot.data.services.length == 0){
+                              return Center(
+                                child: Image.asset("images/noorder.png"),
+                              );
+                            }
                             return new ListView.builder(
                               itemCount: snapshot.data.services.length,
                               itemBuilder: (BuildContext context, int index){
