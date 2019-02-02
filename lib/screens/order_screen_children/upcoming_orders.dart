@@ -15,12 +15,17 @@ class UpcomingOrders extends StatefulWidget{
 String _phone;
 DateTime _date;
 String strDate;
+String _email;
 
 class _UpcomingOrdersState extends State<UpcomingOrders>{
 
   void initState() {
     getPhonePreferences().then((value) {
       _phone = value;
+    });
+    getEmailPreferences()
+      .then((value){
+        _email = value;
     });
     _date = DateTime.now();
     strDate = _date.day.toString() + "-" + _date.month.toString() + "-" + _date.year.toString();
@@ -30,6 +35,11 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
   Future<String> getPhonePreferences() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     return prefs.getString("userPhone") ?? "";
+  }
+
+  Future<String> getEmailPreferences() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString("userEmail") ?? "";
   }
 
   Future<List<Order>> _getUpcomingOrders() async{
@@ -60,9 +70,12 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
             });
             _cancelOrder(value)
                 .then((bool){
-              Navigator.pop(context);
-              Navigator.pushReplacement(
-                  context, MaterialPageRoute(builder: (context) => OrdersScreen()));
+                  _sendMail(value)
+                      .then((bool){
+                    Navigator.pop(context);
+                    Navigator.pushReplacement(
+                        context, MaterialPageRoute(builder: (context) => OrdersScreen()));
+                  });
             });
           },
           child: Text("Yeah"),
@@ -89,6 +102,16 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
   Future<bool> _cancelOrder(value) async{
     String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/order/cancel/" + value;
     var data = await http.get(url);
+    return true;
+  }
+
+  Future<bool> _sendMail(value) async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/mail/order_cancelled";
+    Map<String, String> map = {
+      "email" : _email,
+      "orderId" : value
+    };
+    var data = await http.post(url, body: map);
     return true;
   }
 
