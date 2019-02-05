@@ -127,7 +127,7 @@ class _ChildHomeState extends State<ChildHome>{
           children: <Widget>[
             Container(
               height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
-              MediaQuery.of(context).size.width * 0.60
+              MediaQuery.of(context).size.width * 0.80
                   : MediaQuery.of(context).size.width * 0.40,
               width: MediaQuery.of(context).size.width,
               color: Colors.white,
@@ -139,32 +139,32 @@ class _ChildHomeState extends State<ChildHome>{
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1548925892/poster1.jpg",),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1548925892/poster1.jpg",),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster2.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster2.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster3.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster3.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster4.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster4.jpg")),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/c_crop,h_1587,w_1587,x_0/v1547966865/poster5.jpg")),
+                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/newposter5.jpg")),
                     ),
                   ],
                 ),
@@ -225,7 +225,7 @@ class _ChildHomeState extends State<ChildHome>{
                                                     ),
                                                   ),
                                                   Text(
-                                                    snapshot.data[index].subcategory,
+                                                    snapshot.data[index].subcategory + " (" + snapshot.data[index].category + ")",
                                                     style: TextStyle(
                                                       fontSize: 16.0,
                                                       fontWeight: FontWeight.w200
