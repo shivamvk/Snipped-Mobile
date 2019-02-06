@@ -24,7 +24,7 @@ class _ChildFaqState extends State<ChildFaq>{
   }
 
   _callSupport() async{
-    const url = "tel:8130583124";
+    const url = "tel:8630363425";
     if(await canLaunch(url)){
       launch(url);
     } else{

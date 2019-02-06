@@ -182,8 +182,7 @@ class _ChildHomeState extends State<ChildHome>{
                       style: new TextStyle(
                         color: Colors.black,
                         fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'DancingScript',
+                        fontFamily: 'Roboto',
                       ),
                     ),
                   ),
@@ -336,8 +335,7 @@ class _ChildHomeState extends State<ChildHome>{
                       style: new TextStyle(
                         color: Colors.black,
                         fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                        fontFamily: 'DancingScript',
+                        fontFamily: 'Roboto',
                       ),
                     ),
                   ),
@@ -473,7 +471,7 @@ class _ChildHomeState extends State<ChildHome>{
                           Text(
                             "Made with ",
                             style: TextStyle(
-                              fontFamily: 'Pacifico',
+                              fontFamily: 'Roboto',
                               fontSize: 20.0,
                             ),
                           ),
@@ -486,15 +484,11 @@ class _ChildHomeState extends State<ChildHome>{
                       Text(
                         "for Beauty Enthusiats.",
                         style: TextStyle(
-                            fontFamily: 'Pacifico',
+                          fontFamily: 'Roboto',
                           fontSize: 22.0
                         ),
                       )
                     ],
-                  ),
-                  Container(
-                      height: 50.0,
-                      child: Image.asset("images/brandlogoscissors.png")
                   ),
                 ],
               ),

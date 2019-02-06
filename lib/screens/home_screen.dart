@@ -357,7 +357,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Padding(
               padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 0.0),
-              child: new Text("v1.0"),
+              child: new Text("v1.1.0"),
             )
           ],
         ),
