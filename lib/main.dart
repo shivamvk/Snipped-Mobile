@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       ),
       debugShowCheckedModeBanner: false,
       home: new SplashScreen(
-        seconds: 4,
+        seconds: 3,
         image: Image.asset(
           "images/brandlogowhite.png",
         ),

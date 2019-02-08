@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'home_screen.dart';
 
@@ -103,6 +104,15 @@ class _SignupScreenState extends State<SignupScreen> {
     return prefs.commit();
   }
 
+  void _launchPrivacyPolicy() async{
+    const url = "https://shivamvk.github.io/privacy_policy.html";
+    if(await canLaunch(url)){
+      await launch(url);
+    } else{
+      print("Error");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
@@ -182,6 +192,34 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                 ),
+                Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(top: 32.0),
+                    child: GestureDetector(
+                      onTap: () {
+                        const url = "https://shivamvk.github.io/privacy_policy.html";
+                        launch(url);
+                      },
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "View our ",
+                            style: TextStyle(
+                              color: Colors.white
+                            ),
+                          ),
+                          Text(
+                            "Privacy Policy.",
+                            style: TextStyle(
+                              color: Color(0xffff7100)
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                )
               ]),
         ),
       )

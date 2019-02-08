@@ -7,6 +7,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:url_launcher/url_launcher.dart';
 
 import 'login_screen.dart';
 import 'home_screen_children/home.dart';
@@ -260,6 +261,10 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             });
           break;
+      case "privacy":
+        const url = "https://shivamvk.github.io/privacy_policy.html";
+        launch(url);
+        break;
     }
   }
 
@@ -355,8 +360,14 @@ class _HomeScreenState extends State<HomeScreen> {
               trailing: new Icon(Icons.arrow_forward_ios),
               onTap: () => _onDrawerTapped("logout"),
             ),
+            new Divider(),
+            new ListTile(
+              title: new Text("Privacy Policy"),
+              trailing: new Icon(Icons.arrow_forward_ios),
+              onTap: () => _onDrawerTapped("privacy"),
+            ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 0.0),
+              padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 32.0),
               child: new Text("v1.1.0"),
             )
           ],
