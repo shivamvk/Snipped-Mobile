@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_pro/carousel_pro.dart';
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:snipped/screens/home_screen.dart';
 
@@ -18,6 +19,24 @@ class ChildHome extends StatefulWidget{
 
 String _serviceName = "";
 String _gender = "";
+
+Color _getCategoryBGColor(value){
+  switch (value){
+    case "hair": return Colors.brown[200];
+    case "beauty": return Color(0xffffc0cb);
+    case "makeup": return Color(0xffffe4b5);
+    case "waxing": return Colors.green;
+  }
+}
+
+String _getCategoryText(value){
+  switch (value){
+    case "hair": return "Hair";
+    case "beauty": return "Beauty";
+    case "makeup": return "Make up";
+    case "waxing": return "Waxing";
+  }
+}
 
 class _ChildHomeState extends State<ChildHome>{
 
@@ -189,7 +208,7 @@ class _ChildHomeState extends State<ChildHome>{
                   Padding(
                     padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
                     child: Container(
-                      height: 80.0,
+                      height: 108.0,
                       child: FutureBuilder(
                         future: _getTrendingServices(),
                         builder: (BuildContext context, AsyncSnapshot snapshot){
@@ -224,15 +243,33 @@ class _ChildHomeState extends State<ChildHome>{
                                                     ),
                                                   ),
                                                   Text(
-                                                    snapshot.data[index].subcategory + " (" + snapshot.data[index].category + ")",
+                                                    snapshot.data[index].subcategory,
                                                     style: TextStyle(
                                                       fontSize: 16.0,
                                                       fontWeight: FontWeight.w200
                                                     ),
                                                   ),
-                                                  Text(
-                                                    "(" + snapshot.data[index].gender + ")",
-                                                  )
+                                                  Row(
+                                                    children: <Widget>[
+                                                      Chip(
+                                                        backgroundColor: _getCategoryBGColor(snapshot.data[index].category),
+                                                        label: Text(
+                                                            _getCategoryText(snapshot.data[index].category)
+                                                        ),
+                                                      ),
+                                                      Padding(padding: EdgeInsets.only(left: 8.0)),
+                                                      Chip(
+                                                        backgroundColor: (snapshot.data[index].gender == "female")
+                                                            ? Colors.pinkAccent[100]
+                                                            : Colors.blue[300],
+                                                        label: Text(
+                                                            (snapshot.data[index].gender == "female")
+                                                            ? "For girls"
+                                                            : "For boys"
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ],
                                               ),
                                               Column(
@@ -582,6 +619,7 @@ class _ChildServicesState extends State<ChildServices>{
 
   @override
   Widget build(BuildContext context) {
+
     return WillPopScope(
       onWillPop: (){
         Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
