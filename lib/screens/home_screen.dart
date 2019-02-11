@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snipped/transitions/slide_rtl.dart';
 import 'orders_screen.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -297,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       onPressed: (){
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => CartScreen())
+                          SlideRTL(widget: CartScreen())
                         );
                       }
                     ),

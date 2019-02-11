@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:snipped/transitions/slide_ltr.dart';
 
 import 'order_screen_children/todays_orders.dart';
 import 'order_screen_children/all_orders.dart';
@@ -19,7 +20,7 @@ class _OrderScreenState extends State<OrdersScreen>{
       onWillPop: (){
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => HomeScreen()),
+          SlideLTR(widget: HomeScreen()),
         );
       },
       child: DefaultTabController(
@@ -33,7 +34,7 @@ class _OrderScreenState extends State<OrdersScreen>{
               onPressed: (){
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => HomeScreen())
+                  SlideLTR(widget: HomeScreen())
                 );
               },
             ),

@@ -10,6 +10,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 import 'package:snipped/screens/cart_screen.dart';
+import 'package:snipped/transitions/slide_ltr.dart';
+import 'package:snipped/transitions/slide_rtl.dart';
 
 class ChildHome extends StatefulWidget{
 
@@ -116,7 +118,10 @@ class _ChildHomeState extends State<ChildHome>{
       _serviceName = value;
       _gender = gender;
     });
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ChildServices()));
+    Navigator.pushReplacement(
+      context,
+      SlideRTL(widget: ChildServices())
+    );
     return prefs.commit();
   }
 
@@ -622,7 +627,10 @@ class _ChildServicesState extends State<ChildServices>{
 
     return WillPopScope(
       onWillPop: (){
-        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+        Navigator.pushReplacement(
+          context,
+          SlideLTR(widget: HomeScreen())
+        );
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -633,7 +641,7 @@ class _ChildServicesState extends State<ChildServices>{
             icon: Icon(Icons.arrow_back_ios),
             color: Colors.white,
             onPressed: (){
-              Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomeScreen()));
+              Navigator.pushReplacement(context, SlideLTR(widget: HomeScreen()));
             },
           ),
         ),

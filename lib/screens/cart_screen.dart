@@ -3,6 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:progress_hud/progress_hud.dart';
+import 'package:snipped/transitions/slide_ltr.dart';
 
 import 'home_screen.dart';
 import 'package:snipped/models/Service.dart';
@@ -236,7 +237,8 @@ class _CartScreenState extends State<CartScreen> {
     return WillPopScope(
         onWillPop: () {
           Navigator.pushReplacement(
-              context, MaterialPageRoute(builder: (context) => HomeScreen()));
+              context, SlideLTR(widget: HomeScreen())
+          );
         },
         child: Scaffold(
             key: _scaffoldKey,
@@ -248,7 +250,8 @@ class _CartScreenState extends State<CartScreen> {
                 color: Colors.white,
                 onPressed: () {
                   Navigator.pushReplacement(context,
-                      MaterialPageRoute(builder: (context) => HomeScreen()));
+                      SlideLTR(widget: HomeScreen())
+                  );
                 },
               ),
             ),
