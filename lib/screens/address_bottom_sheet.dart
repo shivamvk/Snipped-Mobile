@@ -312,15 +312,15 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
     }
     if(_date.day.toString() == "9" && _date.month.toString() == "2" && _date.year.toString() == "2019"
     || _date.day.toString() == "16" && _date.month.toString() == "2" && _date.year.toString() == "2019"
-    || _date.day.toString() == "20" && _date.month.toString() == "2" && _date.year.toString() == "2019"
-    || _date.day.toString() == "21" && _date.month.toString() == "2" && _date.year.toString() == "2019"
-    || _date.day.toString() == "22" && _date.month.toString() == "2" && _date.year.toString() == "2019"
-    || _date.day.toString() == "23" && _date.month.toString() == "2" && _date.year.toString() == "2019"){
+    || _date.day.toString() == "23" && _date.month.toString() == "2" && _date.year.toString() == "2019"
+    || _date.day.toString() == "24" && _date.month.toString() == "2" && _date.year.toString() == "2019"
+    || _date.day.toString() == "25" && _date.month.toString() == "2" && _date.year.toString() == "2019"
+    || _date.day.toString() == "26" && _date.month.toString() == "2" && _date.year.toString() == "2019"){
       return true;
     } else{
       setState(() {
         _dateError = true;
-        _dateErrorText = "We're currently taking orders for 9, 16, 20, 21, 22 and 23rd of Feb";
+        _dateErrorText = "We're currently taking orders for 9, 16, 23, 24, 25 and 26th of Feb";
       });
       return false;
     }

@@ -795,7 +795,7 @@ class _ChildServicesState extends State<ChildServices>{
                               onPressed: (){
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => HomeScreen()),
+                                  SlideLTR(widget: HomeScreen()),
                                 );
                               },
                               elevation: 5.0,
@@ -814,7 +814,7 @@ class _ChildServicesState extends State<ChildServices>{
                               onPressed: (){
                                 Navigator.pushReplacement(
                                   context,
-                                  MaterialPageRoute(builder: (context) => CartScreen()),
+                                  SlideRTL(widget: CartScreen()),
                                 );
                               },
                               elevation: 5.0,
