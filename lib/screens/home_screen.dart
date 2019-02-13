@@ -274,10 +274,11 @@ class _HomeScreenState extends State<HomeScreen> {
     return new Scaffold(
       backgroundColor: Colors.white,
       appBar: new AppBar(
+        elevation: 0.0,
         flexibleSpace: Padding(
           padding: const EdgeInsets.only(top: 40.0),
           child: new Image.asset(
-            "images/brandlogoappbar.png",
+            "images/coloredappbarlogo.png",
             width: 100,
             height: 40,
           ),
@@ -293,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     new IconButton(
                       icon: new Icon(
                         Icons.shopping_cart,
-                        color: Colors.white,
+                        color: Color(0xff073848),
                       ),
                       onPressed: (){
                         Navigator.pushReplacement(
@@ -333,12 +334,27 @@ class _HomeScreenState extends State<HomeScreen> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             new UserAccountsDrawerHeader(
-              accountName: new Text((_name == null) ? "Account name" : _name),
+              accountName: new Text(
+                (_name == null) ? "Account name" : _name,
+                style: TextStyle(
+                  color: Colors.black
+                ),
+              ),
               accountEmail:
-                  new Text((_email == null) ? "Account email" : _email),
+                  new Text(
+                    (_email == null) ? "Account email" : _email,
+                    style: TextStyle(
+                      color: Colors.black
+                    ),
+                  ),
               currentAccountPicture: new CircleAvatar(
-                backgroundColor: Colors.white,
-                child: new Text((_name == null) ? "hey" : _name[0]),
+                backgroundColor: Color(0xffff7100),
+                child: new Text(
+                  (_name == null) ? "hey" : _name,
+                  style: TextStyle(
+                    color: Colors.white
+                  ),
+                ),
               ),
             ),
             new ListTile(
