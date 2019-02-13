@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         styleTextUnderTheLoader: new TextStyle(
           color: Color(0xff073848)
         ),
-        navigateAfterSeconds: new HomeScreen()
+        navigateAfterSeconds: new RedirectScreen()
       ),
     );
   }
