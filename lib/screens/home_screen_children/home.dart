@@ -208,6 +208,7 @@ class _ChildHomeState extends State<ChildHome>{
                           color: Colors.black,
                           fontSize: 20.0,
                           fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500
                         ),
                       ),
                     ),
@@ -379,6 +380,7 @@ class _ChildHomeState extends State<ChildHome>{
                           color: Colors.black,
                           fontSize: 20.0,
                           fontFamily: 'Roboto',
+                          fontWeight: FontWeight.w500
                         ),
                       ),
                     ),
@@ -388,7 +390,7 @@ class _ChildHomeState extends State<ChildHome>{
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            elevation: 5.0,
+                            elevation: 1.0,
                             child: Column(
                               children: <Widget>[
                                 GestureDetector(
@@ -404,7 +406,12 @@ class _ChildHomeState extends State<ChildHome>{
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Text("Hair"),
+                                  child: new Text(
+                                    "Hair",
+                                    style: TextStyle(
+                                      fontSize: 18.0
+                                    ),
+                                  ),
                                 )
                               ],
                             ),
@@ -413,7 +420,7 @@ class _ChildHomeState extends State<ChildHome>{
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            elevation: 5.0,
+                            elevation: 1.0,
                             child: Column(
                               children: <Widget>[
                                 GestureDetector(
@@ -429,7 +436,12 @@ class _ChildHomeState extends State<ChildHome>{
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Text("Beauty"),
+                                  child: new Text(
+                                    "Beauty",
+                                    style: TextStyle(
+                                      fontSize: 18.0
+                                    ),
+                                  ),
                                 )
                               ],
                             ),
@@ -443,7 +455,7 @@ class _ChildHomeState extends State<ChildHome>{
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            elevation: 5.0,
+                            elevation: 1.0,
                             child: Column(
                               children: <Widget>[
                                 GestureDetector(
@@ -459,7 +471,12 @@ class _ChildHomeState extends State<ChildHome>{
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Text("Make up"),
+                                  child: new Text(
+                                    "Make up",
+                                    style: TextStyle(
+                                      fontSize: 18.0
+                                    ),
+                                  ),
                                 )
                               ],
                             ),
@@ -468,7 +485,7 @@ class _ChildHomeState extends State<ChildHome>{
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Card(
-                            elevation: 5.0,
+                            elevation: 1.0,
                             child: Column(
                               children: <Widget>[
                                 GestureDetector(
@@ -484,7 +501,12 @@ class _ChildHomeState extends State<ChildHome>{
                                 ),
                                 Padding(
                                   padding: const EdgeInsets.all(8.0),
-                                  child: new Text("Waxing"),
+                                  child: new Text(
+                                    "Waxing",
+                                    style: TextStyle(
+                                      fontSize: 18.0
+                                    ),
+                                  ),
                                 )
                               ],
                             ),
@@ -498,41 +520,43 @@ class _ChildHomeState extends State<ChildHome>{
               new Container(
                 height: 150.0,
                 width: MediaQuery.of(context).size.width,
-                child: Row(
+                child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Container(
-                      height: 50.0,
-                      child: Image.asset("images/brandlogoscissors.png")
-                    ),
-                    Column(
+                    Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            Text(
-                              "Made with ",
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 20.0,
-                              ),
-                            ),
-                            Icon(
-                              Icons.favorite,
-                              color: Colors.red,
-                            ),
-                          ],
-                        ),
                         Text(
-                          "for Beauty Enthusiats.",
+                          "Made with ",
                           style: TextStyle(
                             fontFamily: 'Roboto',
-                            fontSize: 22.0
+                            fontSize: 20.0,
                           ),
-                        )
+                        ),
+                        Icon(
+                          Icons.favorite,
+                          color: Colors.red,
+                        ),
                       ],
                     ),
+                    Text(
+                      "for Beauty Enthusiats.",
+                      style: TextStyle(
+                        fontFamily: 'Roboto',
+                        fontSize: 20.0
+                      ),
+                    ),
+                    Padding(padding: EdgeInsets.only(top: 4.0)),
+                    Image.asset(
+                      "images/coloredappbarlogo.png",
+                      width: 90.0,
+                    ),
+                    Text(
+                      "Pvt. Ltd."
+                    ),
+                    Text(
+                      "© Copyright 2019"
+                    )
                   ],
                 ),
               )

@@ -330,64 +330,67 @@ class _HomeScreenState extends State<HomeScreen> {
         ],
       ),
       drawer: new Drawer(
-        child: new ListView(
-          padding: EdgeInsets.zero,
-          children: <Widget>[
-            new UserAccountsDrawerHeader(
-              accountName: new Text(
-                (_name == null) ? "Account name" : _name,
-                style: TextStyle(
-                  color: Colors.black
+        child: Container(
+          color: Colors.white,
+          child: new ListView(
+            padding: EdgeInsets.zero,
+            children: <Widget>[
+              new UserAccountsDrawerHeader(
+                accountName: new Text(
+                  (_name == null) ? "Account name" : _name,
+                  style: TextStyle(
+                    color: Colors.black
+                  ),
                 ),
-              ),
-              accountEmail:
-                  new Text(
-                    (_email == null) ? "Account email" : _email,
+                accountEmail:
+                    new Text(
+                      (_email == null) ? "Account email" : _email,
+                      style: TextStyle(
+                        color: Colors.black
+                      ),
+                    ),
+                currentAccountPicture: new CircleAvatar(
+                  backgroundColor: Color(0xffff7100),
+                  child: new Text(
+                    (_name == null) ? "hey" : _name[0],
                     style: TextStyle(
-                      color: Colors.black
+                      color: Colors.white
                     ),
                   ),
-              currentAccountPicture: new CircleAvatar(
-                backgroundColor: Color(0xffff7100),
-                child: new Text(
-                  (_name == null) ? "hey" : _name,
-                  style: TextStyle(
-                    color: Colors.white
-                  ),
                 ),
               ),
-            ),
-            new ListTile(
-              title: new Text("Home"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("home"),
-            ),
-            new ListTile(
-                title: new Text("My Orders"),
+              new ListTile(
+                title: new Text("Home"),
                 trailing: new Icon(Icons.arrow_forward_ios),
-                onTap: () => _onDrawerTapped("orders")),
-            new Divider(),
-            new ListTile(
-              title: new Text("Help and support"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("faq"),
-            ),
-            new ListTile(
-              title: new Text("Log out"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("logout"),
-            ),
-            new Divider(),
-            new ListTile(
-              title: new Text("Privacy Policy"),
-              trailing: new Icon(Icons.arrow_forward_ios),
-              onTap: () => _onDrawerTapped("privacy"),
-            ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 32.0),
-              child: new Text("V 1.1.3"),
-            )
-          ],
+                onTap: () => _onDrawerTapped("home"),
+              ),
+              new ListTile(
+                  title: new Text("My Orders"),
+                  trailing: new Icon(Icons.arrow_forward_ios),
+                  onTap: () => _onDrawerTapped("orders")),
+              new Divider(),
+              new ListTile(
+                title: new Text("Help and support"),
+                trailing: new Icon(Icons.arrow_forward_ios),
+                onTap: () => _onDrawerTapped("faq"),
+              ),
+              new ListTile(
+                title: new Text("Log out"),
+                trailing: new Icon(Icons.arrow_forward_ios),
+                onTap: () => _onDrawerTapped("logout"),
+              ),
+              new Divider(),
+              new ListTile(
+                title: new Text("Privacy Policy"),
+                trailing: new Icon(Icons.arrow_forward_ios),
+                onTap: () => _onDrawerTapped("privacy"),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 32.0),
+                child: new Text("V 1.1.3"),
+              )
+            ],
+          ),
         ),
       ),
       body: _isConnectedToInternet
