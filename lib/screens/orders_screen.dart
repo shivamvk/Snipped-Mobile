@@ -27,6 +27,7 @@ class _OrderScreenState extends State<OrdersScreen>{
         length: 4,
         child: Scaffold(
           appBar: AppBar(
+            elevation: 0.0,
             title: Text("Orders"),
             centerTitle: true,
             leading: IconButton(

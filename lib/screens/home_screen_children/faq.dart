@@ -27,8 +27,13 @@ class _ChildFaqState extends State<ChildFaq>{
     const url = "tel:8630363425";
     if(await canLaunch(url)){
       launch(url);
-    } else{
+    }
+  }
 
+  _mailSupport() async {
+    const url = "mailto:internals.snipped@gmail.com?subject=I have a query!&body=Please describe your query here.";
+    if(await canLaunch(url)){
+      launch(url);
     }
   }
 
@@ -38,7 +43,7 @@ class _ChildFaqState extends State<ChildFaq>{
       child: Column(
         children: <Widget>[
           Expanded(
-            flex: 9,
+            flex: 10,
             child: Center(
               child: FutureBuilder(
                 future: _getFaqs(),
@@ -48,50 +53,34 @@ class _ChildFaqState extends State<ChildFaq>{
                       itemCount: snapshot.data.length,
                       itemBuilder: (BuildContext context, int index){
                         return new Container(
-                          color: (list.contains(snapshot.data[index].id))? Colors.grey[200] : Colors.white,
+                          color: Colors.white,
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Column(
                               children: <Widget>[
-                                GestureDetector(
-                                  onTap: (){
-                                    setState(() {
-                                      if(list.contains(snapshot.data[index].id)){
-                                        list.remove(snapshot.data[index].id);
-                                      } else{
-                                        list.add(snapshot.data[index].id);
-                                      }
-                                    });
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                    children: <Widget>[
-                                      Container(
-                                        width: MediaQuery.of(context).size.width * 0.90,
-                                        child: Text(
-                                          "Q: " + snapshot.data[index].ques,
-                                          style: TextStyle(
-                                            fontSize: 18.0,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.black
-                                          ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Container(
+                                      width: MediaQuery.of(context).size.width * 0.90,
+                                      child: Text(
+                                        "Q: " + snapshot.data[index].ques,
+                                        style: TextStyle(
+                                          fontSize: 18.0,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.black
                                         ),
                                       ),
-                                      (list.contains(snapshot.data[index].id))?
-                                          Icon(Icons.arrow_drop_up)
-                                          : Icon(Icons.arrow_drop_down)
-                                    ],
-                                  ),
+                                    ),
+                                  ],
                                 ),
-                                (list.contains(snapshot.data[index].id))?
                                     Text(
                                       "Ans: " + snapshot.data[index].ans,
                                       style: TextStyle(
                                         fontSize: 16.0,
                                         fontWeight: FontWeight.w300
                                       ),
-                                    )
-                                    : new Container(),
+                                    ),
                                 Padding(
                                   padding: const EdgeInsets.only(top: 8.0),
                                   child: (list.contains(snapshot.data[index].id))? Container() : Divider(),
@@ -116,41 +105,62 @@ class _ChildFaqState extends State<ChildFaq>{
           ),
           Expanded(
             flex: (MediaQuery.of(context).orientation == Orientation.portrait)? 1 : 2,
-            child: RaisedButton(
-              onPressed: () => _callSupport(),
-              color: Color(0xff073848),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              color: Colors.green,
+              child: Column(
                 children: <Widget>[
-                  Icon(
-                    Icons.call,
-                    color: Color(0xffff7100),
-                    size: 50.0,
+                  Padding(padding: EdgeInsets.only(top: 8.0)),
+                  Text(
+                    "Still can't find an answer?",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 20.0,
+                      fontFamily: "Roboto"
+                    ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Padding(padding: EdgeInsets.only(top: 8.0)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
-                      Text(
-                        "Still can't find answer?",
-                        style: TextStyle(
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.w300,
-                          color: Colors.white
+                      Padding(padding: EdgeInsets.only(left: 32.0)),
+                      GestureDetector(
+                        onTap: () => _callSupport(),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.call, color: Colors.white,),
+                            Padding(padding: EdgeInsets.only(left: 4.0)),
+                            Text(
+                              "Call us!",
+                              style:TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.0
+                              ),
+                            )
+                          ],
                         ),
                       ),
-                      Text(
-                        "Call us!",
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white
+                      GestureDetector(
+                        onTap: () => _mailSupport(),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.mail, color: Colors.white,),
+                            Padding(padding: EdgeInsets.only(left: 4.0)),
+                            Text(
+                              "Mail us!",
+                              style:TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16.0
+                              ),
+                            )
+                          ],
                         ),
-                      )
+                      ),
+                      Padding(padding: EdgeInsets.only(right: 32.0))
                     ],
-                  ),
-                  Icon(Icons.arrow_forward_ios, color: Colors.white,)
+                  )
                 ],
-              )
+              ),
             ),
           )
         ],

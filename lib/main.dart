@@ -20,15 +20,15 @@ class MyApp extends StatelessWidget {
     //to give the status bar defined color
     SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle.dark.copyWith(
-        statusBarColor: Color(0xff073748)
+        statusBarColor: Color(0xffffff),
       )
     );
 
     return new MaterialApp(
       title: "Snipped",
       theme: new ThemeData(
-        primaryColor: new Color(0xffff073848),
-        primaryColorDark: new Color(0xff073848),
+        primaryColor: new Color(0xffffffff),
+        primaryColorDark: new Color(0xffffffff),
       ),
       debugShowCheckedModeBanner: false,
       home: new SplashScreen(

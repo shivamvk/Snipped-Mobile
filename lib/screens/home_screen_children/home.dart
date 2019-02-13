@@ -144,398 +144,400 @@ class _ChildHomeState extends State<ChildHome>{
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: Container(
-        color: Colors.grey[200],
-        child: new Column(
-          children: <Widget>[
-            Container(
-              height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
-              MediaQuery.of(context).size.width * 0.80
-                  : MediaQuery.of(context).size.width * 0.40,
-              width: MediaQuery.of(context).size.width,
-              color: Colors.white,
-              child: Container(
-                child: ListView(
-                  scrollDirection: Axis.horizontal,
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          color: Colors.white,
+          child: new Column(
+            children: <Widget>[
+              Container(
+                height: (MediaQuery.of(context).orientation == Orientation.portrait) ?
+                MediaQuery.of(context).size.width * 0.80
+                    : MediaQuery.of(context).size.width * 0.40,
+                width: MediaQuery.of(context).size.width,
+                color: Colors.white,
+                child: Container(
+                  child: ListView(
+                    scrollDirection: Axis.horizontal,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1548925892/poster1.jpg",),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster2.jpg")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster3.jpg")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster4.jpg")),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8.0),
+                          child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/newposter5.jpg")),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 12.0)),
+              Container(
+                color: Colors.white,
+                child: Column(
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1548925892/poster1.jpg",),
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        "Today's special",
+                        style: new TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                          fontFamily: 'Roboto',
+                        ),
                       ),
                     ),
                     Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster2.jpg")),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster3.jpg")),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/poster4.jpg")),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.only(top: 8.0, bottom : 8.0, left: 8.0, right: 8.0),
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(8.0),
-                        child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/newposter5.jpg")),
-                    ),
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Container(
+                        height: 108.0,
+                        child: FutureBuilder(
+                          future: _getTrendingServices(),
+                          builder: (BuildContext context, AsyncSnapshot snapshot){
+                            if(snapshot.hasData){
+                              return ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: snapshot.data.length,
+                                itemBuilder: (BuildContext context, int index){
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.grey[200])
+                                      ),
+                                      width: MediaQuery.of(context).size.width * 0.70,
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Column(
+                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                  children: <Widget>[
+                                                    Text(
+                                                      snapshot.data[index].name,
+                                                      style: TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight: FontWeight.w300
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      snapshot.data[index].subcategory,
+                                                      style: TextStyle(
+                                                        fontSize: 16.0,
+                                                        fontWeight: FontWeight.w200
+                                                      ),
+                                                    ),
+                                                    Row(
+                                                      children: <Widget>[
+                                                        Chip(
+                                                          backgroundColor: _getCategoryBGColor(snapshot.data[index].category),
+                                                          label: Text(
+                                                              _getCategoryText(snapshot.data[index].category)
+                                                          ),
+                                                        ),
+                                                        Padding(padding: EdgeInsets.only(left: 8.0)),
+                                                        Chip(
+                                                          backgroundColor: (snapshot.data[index].gender == "female")
+                                                              ? Colors.pinkAccent[100]
+                                                              : Colors.blue[300],
+                                                          label: Text(
+                                                              (snapshot.data[index].gender == "female")
+                                                              ? "For girls"
+                                                              : "For boys"
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                Column(
+                                                  children: <Widget>[
+                                                    GestureDetector(
+                                                      onTap: (){
+                                                        setState(() {
+                                                          if(cart.contains(snapshot.data[index].id)){
+                                                            cart.remove(snapshot.data[index].id);
+                                                            //0 means remove this id from cart shared prefs
+                                                            _updateCartSharedPref(snapshot.data[index].id, 0);
+                                                          } else {
+                                                            cart.add(snapshot.data[index].id);
+                                                            //1 means add this id to cart shared prefs
+                                                            _updateCartSharedPref(snapshot.data[index].id, 1);
+                                                          }
+                                                        });
+                                                      },
+                                                      child: Row(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding: const EdgeInsets.only(right: 4.0),
+                                                            child: Text(
+                                                              "₹" + " "  + snapshot.data[index].price.toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 14.0,
+                                                                  fontWeight: FontWeight.w400
+                                                              ),
+                                                              textAlign: TextAlign.right,
+                                                            ),
+                                                          ),
+                                                          (cart.contains(snapshot.data[index].id))?
+                                                          _iconAddedToCart : _iconAddToCart,
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    (cart.contains(snapshot.data[index].id))?
+                                                    _textAddedToCart : _textAddToCart
+                                                  ],
+                                                )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+                            } else{
+                              return new Container();
+                            }
+                          },
+                        )
+                      ),
+                    )
                   ],
                 ),
               ),
-            ),
-            Padding(padding: EdgeInsets.only(top: 12.0)),
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      "Today's special",
-                      style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                        fontFamily: 'Roboto',
+              Padding(padding: EdgeInsets.only(top: 12.0)),
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+                      child: Container(
+                        height: 100.0,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter1.jpg"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter2.jpg"),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter3.jpg"),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+              Padding(padding: EdgeInsets.only(top: 12.0)),
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Text(
+                        "Categories",
+                        style: new TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                          fontFamily: 'Roboto',
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: Container(
-                      height: 108.0,
-                      child: FutureBuilder(
-                        future: _getTrendingServices(),
-                        builder: (BuildContext context, AsyncSnapshot snapshot){
-                          if(snapshot.hasData){
-                            return ListView.builder(
-                              scrollDirection: Axis.horizontal,
-                              itemCount: snapshot.data.length,
-                              itemBuilder: (BuildContext context, int index){
-                                return Padding(
-                                  padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                    new Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 5.0,
+                            child: Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap:() => _openServicesPage("Hair"),
                                   child: Container(
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey[200])
-                                    ),
-                                    width: MediaQuery.of(context).size.width * 0.70,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: <Widget>[
-                                          Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: <Widget>[
-                                                  Text(
-                                                    snapshot.data[index].name,
-                                                    style: TextStyle(
-                                                      fontSize: 20.0,
-                                                      fontWeight: FontWeight.w300
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    snapshot.data[index].subcategory,
-                                                    style: TextStyle(
-                                                      fontSize: 16.0,
-                                                      fontWeight: FontWeight.w200
-                                                    ),
-                                                  ),
-                                                  Row(
-                                                    children: <Widget>[
-                                                      Chip(
-                                                        backgroundColor: _getCategoryBGColor(snapshot.data[index].category),
-                                                        label: Text(
-                                                            _getCategoryText(snapshot.data[index].category)
-                                                        ),
-                                                      ),
-                                                      Padding(padding: EdgeInsets.only(left: 8.0)),
-                                                      Chip(
-                                                        backgroundColor: (snapshot.data[index].gender == "female")
-                                                            ? Colors.pinkAccent[100]
-                                                            : Colors.blue[300],
-                                                        label: Text(
-                                                            (snapshot.data[index].gender == "female")
-                                                            ? "For girls"
-                                                            : "For boys"
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              Column(
-                                                children: <Widget>[
-                                                  GestureDetector(
-                                                    onTap: (){
-                                                      setState(() {
-                                                        if(cart.contains(snapshot.data[index].id)){
-                                                          cart.remove(snapshot.data[index].id);
-                                                          //0 means remove this id from cart shared prefs
-                                                          _updateCartSharedPref(snapshot.data[index].id, 0);
-                                                        } else {
-                                                          cart.add(snapshot.data[index].id);
-                                                          //1 means add this id to cart shared prefs
-                                                          _updateCartSharedPref(snapshot.data[index].id, 1);
-                                                        }
-                                                      });
-                                                    },
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding: const EdgeInsets.only(right: 4.0),
-                                                          child: Text(
-                                                            "₹" + " "  + snapshot.data[index].price.toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 14.0,
-                                                                fontWeight: FontWeight.w400
-                                                            ),
-                                                            textAlign: TextAlign.right,
-                                                          ),
-                                                        ),
-                                                        (cart.contains(snapshot.data[index].id))?
-                                                        _iconAddedToCart : _iconAddToCart,
-                                                      ],
-                                                    ),
-                                                  ),
-                                                  (cart.contains(snapshot.data[index].id))?
-                                                  _textAddedToCart : _textAddToCart
-                                                ],
-                                              )
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                );
-                              },
-                            );
-                          } else{
-                            return new Container();
-                          }
-                        },
-                      )
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(top: 12.0)),
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
-                    child: Container(
-                      height: 100.0,
-                      child: ListView(
-                        scrollDirection: Axis.horizontal,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter1.jpg"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter2.jpg"),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(left: 8.0, right: 8.0),
-                            child: Image.network("https://res.cloudinary.com/cdnsnipped/image/upload/v1547966865/belowposter3.jpg"),
-                          ),
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(padding: EdgeInsets.only(top: 12.0)),
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: new Text(
-                      "Categories",
-                      style: new TextStyle(
-                        color: Colors.black,
-                        fontSize: 20.0,
-                        fontFamily: 'Roboto',
-                      ),
-                    ),
-                  ),
-                  new Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Column(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap:() => _openServicesPage("Hair"),
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width * 0.43,
-                                    child: Center(
-                                        child: new Image.asset(
-                                          "images/hairHomeScreen.jpg",
-                                        )
-                                    )
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: new Text("Hair"),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Column(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () => _openServicesPage("Beauty"),
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width * 0.43,
-                                    child: Center(
-                                        child: new Image.asset(
-                                          "images/beautyHomeScreen.jpeg",
-                                        )
-                                    )
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: new Text("Beauty"),
-                              )
-                            ],
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Column(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () => _openServicesPage("Makeup"),
-                                child: Container(
-                                    width: MediaQuery.of(context).size.width * 0.43,
-                                    child: Center(
-                                        child: new Image.asset(
-                                            "images/makeupHomeScreen.jpg"
-                                        )
-                                    )
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: new Text("Make up"),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Card(
-                          elevation: 5.0,
-                          child: Column(
-                            children: <Widget>[
-                              GestureDetector(
-                                onTap: () =>_openServicesPage("Waxing"),
-                                child: Container(
-                                  width: MediaQuery.of(context).size.width * 0.43,
-                                  child: Center(
-                                      child: new Image.asset(
-                                          "images/waxingHomeScreen.jpg"
+                                      width: MediaQuery.of(context).size.width * 0.43,
+                                      child: Center(
+                                          child: new Image.asset(
+                                            "images/hairHomeScreen.jpg",
+                                          )
                                       )
                                   ),
                                 ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: new Text("Waxing"),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )
-                ],
-              ),
-            ),
-            new Container(
-              height: 150.0,
-              width: MediaQuery.of(context).size.width,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Container(
-                    height: 50.0,
-                    child: Image.asset("images/brandlogoscissors.png")
-                  ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Made with ",
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontSize: 20.0,
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: new Text("Hair"),
+                                )
+                              ],
                             ),
                           ),
-                          Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          ),
-                        ],
-                      ),
-                      Text(
-                        "for Beauty Enthusiats.",
-                        style: TextStyle(
-                          fontFamily: 'Roboto',
-                          fontSize: 22.0
                         ),
-                      )
-                    ],
-                  ),
-                ],
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 5.0,
+                            child: Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () => _openServicesPage("Beauty"),
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.43,
+                                      child: Center(
+                                          child: new Image.asset(
+                                            "images/beautyHomeScreen.jpeg",
+                                          )
+                                      )
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: new Text("Beauty"),
+                                )
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 5.0,
+                            child: Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () => _openServicesPage("Makeup"),
+                                  child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.43,
+                                      child: Center(
+                                          child: new Image.asset(
+                                              "images/makeupHomeScreen.jpg"
+                                          )
+                                      )
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: new Text("Make up"),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Card(
+                            elevation: 5.0,
+                            child: Column(
+                              children: <Widget>[
+                                GestureDetector(
+                                  onTap: () =>_openServicesPage("Waxing"),
+                                  child: Container(
+                                    width: MediaQuery.of(context).size.width * 0.43,
+                                    child: Center(
+                                        child: new Image.asset(
+                                            "images/waxingHomeScreen.jpg"
+                                        )
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: new Text("Waxing"),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
               ),
-            )
-          ],
+              new Container(
+                height: 150.0,
+                width: MediaQuery.of(context).size.width,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Container(
+                      height: 50.0,
+                      child: Image.asset("images/brandlogoscissors.png")
+                    ),
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              "Made with ",
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
+                                fontSize: 20.0,
+                              ),
+                            ),
+                            Icon(
+                              Icons.favorite,
+                              color: Colors.red,
+                            ),
+                          ],
+                        ),
+                        Text(
+                          "for Beauty Enthusiats.",
+                          style: TextStyle(
+                            fontFamily: 'Roboto',
+                            fontSize: 22.0
+                          ),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -635,11 +637,12 @@ class _ChildServicesState extends State<ChildServices>{
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
+          elevation: 0.0,
           title: new Text(_serviceName + " Services"),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
-            color: Colors.white,
+            color: Colors.black,
             onPressed: (){
               Navigator.pushReplacement(context, SlideLTR(widget: HomeScreen()));
             },
@@ -690,29 +693,7 @@ class _ChildServicesState extends State<ChildServices>{
                                                       fontWeight: FontWeight.w200
                                                   ),
                                                 ),
-                                                GestureDetector(
-                                                  onTap: (){
-                                                    setState(() {
-                                                      if(list.contains(snapshot.data.services[index].id)){
-                                                        list.remove(snapshot.data.services[index].id);
-                                                      } else {
-                                                        list.add(snapshot.data.services[index].id);
-                                                      }
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    child: Row(
-                                                      children: <Widget>[
-                                                        Text(
-                                                          "See details"
-                                                        ),
-                                                        (list.contains(snapshot.data.services[index].id))?
-                                                        Icon(Icons.arrow_drop_up) : Icon(Icons.arrow_drop_down)
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                                (list.contains(snapshot.data.services[index].id))?
+                                                Padding(padding: EdgeInsets.only(top: 4.0)),
                                                 Container(
                                                   width: MediaQuery.of(context).size.width * 0.50,
                                                   child: Text(
@@ -722,7 +703,7 @@ class _ChildServicesState extends State<ChildServices>{
                                                       fontWeight: FontWeight.w300
                                                     ),
                                                   ),
-                                                ) : new Container(),
+                                                )
                                               ],
                                             ),
                                             Column(
@@ -791,15 +772,14 @@ class _ChildServicesState extends State<ChildServices>{
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: <Widget>[
                           Expanded(
-                            child: RaisedButton(
+                            child: FlatButton(
                               onPressed: (){
                                 Navigator.pushReplacement(
                                   context,
                                   SlideLTR(widget: HomeScreen()),
                                 );
                               },
-                              elevation: 5.0,
-                              color: Color(0xff205161),
+                              color: Colors.blue,
                               textColor: Colors.white,
                               child: Text(
                                 "See more services",
@@ -810,15 +790,14 @@ class _ChildServicesState extends State<ChildServices>{
                             ),
                           ),
                           Expanded(
-                            child: RaisedButton(
+                            child: FlatButton(
                               onPressed: (){
                                 Navigator.pushReplacement(
                                   context,
                                   SlideRTL(widget: CartScreen()),
                                 );
                               },
-                              elevation: 5.0,
-                              color: Color(0xff073848),
+                              color: Colors.green,
                               textColor: Colors.white,
                               child: Text(
                                 "Go to cart",
