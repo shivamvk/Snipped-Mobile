@@ -348,7 +348,7 @@ class _CartScreenState extends State<CartScreen> {
                                       padding: const EdgeInsets.fromLTRB(
                                           8.0, 24.0, 8.0, 16.0),
                                       child: RaisedButton(
-                                        elevation: 10.0,
+                                        elevation: 0.0,
                                         color: Color(0xff073848),
                                         textColor: Colors.white,
                                         onPressed: _showAddressBottomSheet,

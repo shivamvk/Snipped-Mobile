@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:snipped/screens/home_screen_children/account.dart';
 import 'package:snipped/transitions/slide_rtl.dart';
 import 'orders_screen.dart';
 import 'package:connectivity/connectivity.dart';
@@ -42,6 +43,10 @@ final List<Widget> _drawerChildren = [
   new Container(
     color: Colors.white,
     child: new ChildFaq(),
+  ),
+  new Container(
+    color: Colors.white,
+    child: new ChildAccount(name: _name, email: _email, phone: _phone,),
   ),
 ];
 
@@ -222,6 +227,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onDrawerTapped(value) {
     Navigator.pop(context);
     switch (value) {
+      case "account":
+        setState(() {
+          _currentIndex = 2;
+        });
+        break;
       case "home":
         setState(() {
           _currentIndex = 0;
@@ -358,6 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
+                onDetailsPressed: () => _onDrawerTapped("account"),
               ),
               new ListTile(
                 title: new Text("Home"),
@@ -387,7 +398,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               Padding(
                 padding: const EdgeInsets.fromLTRB(20.0, 16.0, 0.0, 32.0),
-                child: new Text("V 1.1.3"),
+                child: new Text("V 1.5.0"),
               )
             ],
           ),
