@@ -106,7 +106,7 @@ class _TodaysScreenState extends State<TodaysScreen>{
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
                                         Text(
-                                          "Order id: ",
+                                          "Booking id: ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,

@@ -105,7 +105,7 @@ class _PastOrdersState extends State<PastOrders>{
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
                                         Text(
-                                          "Order id: ",
+                                          "Booking id: ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,

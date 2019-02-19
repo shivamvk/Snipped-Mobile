@@ -183,7 +183,7 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: <Widget>[
                                         Text(
-                                          "Order id: ",
+                                          "Booking id: ",
                                           style: TextStyle(
                                               fontWeight: FontWeight.w500,
                                               color: Colors.black,
@@ -408,7 +408,7 @@ class _UpcomingOrdersState extends State<UpcomingOrders>{
                                     child: Padding(
                                       padding: const EdgeInsets.only(top: 12.0, bottom: 12.0),
                                       child: Text(
-                                        "CANCEL ORDER",
+                                        "CANCEL BOOKING",
                                         style: TextStyle(
                                           fontSize: 16.0,
                                         ),

@@ -50,7 +50,8 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
-          title: Text("Order placed"),
+          elevation: 0.0,
+          title: Text("Booking confirmed"),
           centerTitle: true,
           leading: IconButton(
             icon: Icon(Icons.arrow_back_ios),
@@ -85,7 +86,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                       ),
                       Padding(padding: EdgeInsets.only(top: 8.0)),
                       Text(
-                        "Your order has been placed.",
+                        "Your booking has been confirmed.",
                         style: TextStyle(
                           fontSize: 16.0,
                           fontWeight: FontWeight.w300,
@@ -93,7 +94,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                         ),
                       ),
                       Text(
-                        "We'll reach out to you shortly with your order.",
+                        "We'll reach out to you shortly with your booking.",
                         style: TextStyle(
                             fontSize: 16.0,
                             fontWeight: FontWeight.w300,
@@ -105,14 +106,14 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                 ),
               ),
               Container(
-                color: Colors.grey[200],
+                color: Colors.white,
                 width: MediaQuery.of(context).size.width,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     children: <Widget>[
                       Text(
-                        "Order details",
+                        "Booking details",
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.w600,
@@ -125,7 +126,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: <Widget>[
                             Text(
-                              "Order number",
+                              "Booking number",
                               style: TextStyle(
                                 fontSize: 16.0,
                                 fontWeight: FontWeight.w400
@@ -230,7 +231,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                           ),
                         ),
                         Text(
-                          _statusText,
+                          "Booked",
                           style: TextStyle(
                               fontSize: 16.0,
                               color: Colors.green,
@@ -256,7 +257,7 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
                         },
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50.0)),
                         color: Color(0xff073848),
-                        elevation: 10.0,
+                        elevation: 0.0,
                         textColor: Colors.white,
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(32.0, 12.0, 32.0, 12.0),
@@ -294,5 +295,4 @@ class _OrderPlacedScreenState extends State<OrderPlacedScreen>{
       ),
     );
   }
-
 }

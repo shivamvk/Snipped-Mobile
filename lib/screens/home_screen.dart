@@ -376,7 +376,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onTap: () => _onDrawerTapped("home"),
               ),
               new ListTile(
-                  title: new Text("My Orders"),
+                  title: new Text("My Bookings"),
                   trailing: new Icon(Icons.arrow_forward_ios),
                   onTap: () => _onDrawerTapped("orders")),
               new Divider(),

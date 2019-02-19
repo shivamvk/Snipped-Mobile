@@ -28,7 +28,7 @@ class _OrderScreenState extends State<OrdersScreen>{
         child: Scaffold(
           appBar: AppBar(
             elevation: 0.0,
-            title: Text("Orders"),
+            title: Text("Bookings"),
             centerTitle: true,
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios),

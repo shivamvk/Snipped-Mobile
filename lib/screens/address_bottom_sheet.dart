@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:flutter_google_places/flutter_google_places.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:snipped/models/Address.dart';
 
 import 'order_placed_screen.dart';
 import 'package:snipped/models/Order.dart';
@@ -17,24 +18,18 @@ class AddressBottomSheet extends StatefulWidget{
   final int totalValue;
   final List<String> cartList;
   final String couponCode;
+  final List<Address> addresses;
 
-  AddressBottomSheet(this.totalValue, this.cartList, this.couponCode);
+  AddressBottomSheet(this.totalValue, this.cartList, this.couponCode, this.addresses);
 
   @override
   _AddressBottomSheetState createState() => _AddressBottomSheetState();
 }
 
-bool _pinCodeError = false;
-bool _flatError = false;
-bool _colonyError = false;
-bool _cityError = false;
 bool _dateError = false;
 bool _timeError = false;
+bool _addressError = false;
 
-final _pinCodeController = new TextEditingController();
-final _flatController = new TextEditingController();
-final _colonyController = new TextEditingController();
-final _cityController = new TextEditingController();
 final _dateController = new TextEditingController();
 final _timeController = new TextEditingController();
 final _remarksController = new TextEditingController();
@@ -53,53 +48,28 @@ String _email;
 String _phone;
 String _cart;
 
+Address _selectedAddress;
+
 final FlutterLocalNotificationsPlugin localNotificationsPlugin = new FlutterLocalNotificationsPlugin();
 
 class _AddressBottomSheetState extends State<AddressBottomSheet>{
 
   _validateInputs(){
-    String pincode = _pinCodeController.text;
-    String flat = _flatController.text;
-    String colony = _colonyController.text;
-    String city = _cityController.text;
     String date = _dateController.text;
     String time = _timeController.text;
     String remarks = _remarksController.text;
 
-    if(pincode.isEmpty){
+    if(_selectedAddress == null){
       setState(() {
-        _pinCodeError = true;
+        _addressError = true;
       });
       return;
     }
 
-    if(pincode.length != 6){
-      setState(() {
-        _pinCodeError = true;
-      });
-      return;
-    }
-
-    if(flat.isEmpty){
-      setState(() {
-        _flatError = true;
-      });
-      return;
-    }
-
-    if(colony.isEmpty){
-      setState(() {
-        _colonyError = true;
-      });
-      return;
-    }
-
-    if(city.isEmpty){
-      setState(() {
-        _cityError = true;
-      });
-      return;
-    }
+    String pincode = _selectedAddress.pincode;
+    String flat = _selectedAddress.flat;
+    String colony = _selectedAddress.colony;
+    String city = _selectedAddress.city;
 
     if(date.isEmpty){
       setState(() {
@@ -347,6 +317,10 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
         initializationSettingsAndroid, initializationSettingsIOS);
     localNotificationsPlugin.initialize(initializationSettings);
 
+    _addressError = false;
+    _dateError = false;
+    _timeError = false;
+
     getEmailPreferences()
       .then((value){
         setState(() {
@@ -369,7 +343,7 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
         _cart = value;
     });
 
-    _cityController.text = "Lucknow";
+    _selectedAddress = null;
 
     super.initState();
   }
@@ -387,107 +361,157 @@ class _AddressBottomSheetState extends State<AddressBottomSheet>{
               size: 40.0,
             ),
             Text(
-              "Please enter your address to proceed!",
+              "Please select an address!",
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16.0,
                 fontWeight: FontWeight.w400,
               ),
             ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "6 Digits(0-9) Pin Code",
-                labelStyle: new TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w300
-                ),
-                errorText: _pinCodeError? "Enter a valid pin code" : null
-              ),
-              keyboardType: TextInputType.number,
-              cursorColor: new Color(0xffff7100),
-              style: new TextStyle(
-                color: Colors.black,
-              ),
-              controller: _pinCodeController,
-              onChanged: (value){
-                if(value.length != 6){
-                  setState(() {
-                    _pinCodeError = true;
-                  });
-                } else if(value.length == 6) {
-                  setState(() {
-                    _pinCodeError = false;
-                  });
-                }
-              },
-            ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "Flat / House no. / Floor/ Building",
-                labelStyle: new TextStyle(
-                  color: Colors.black,
-                  fontWeight: FontWeight.w300
-                ),
-                errorText: _flatError? "This field is required!" : null
-              ),
-              keyboardType: TextInputType.text,
-              cursorColor: new Color(0xffff7100),
-              style: new TextStyle(
-                  color: Colors.black
-              ),
-              controller: _flatController,
-              onChanged: (value){
+            Padding(padding: EdgeInsets.only(top: 8.0)),
+            (widget.addresses.length >= 1)
+                ?
+            GestureDetector(
+              onTap: () {
                 setState(() {
-                  _flatError = false;
+                  _selectedAddress = widget.addresses[0];
+                  _addressError = false;
                 });
               },
-            ),
-            TextField(
-              decoration: InputDecoration(
-                labelText: "Colony / Street / Locality",
-                labelStyle: new TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300
-                ),
-                errorText: _colonyError? "This field is required!" : null
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      border: (_selectedAddress == widget.addresses[0])?
+                      Border.all(color: Color(0xffff7100), width: 2.0)
+                      :Border.all(color: Colors.black, width: 1.0)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.addresses[0].flat + ", " + widget.addresses[0].colony,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 4.0)),
+                        Text(
+                          widget.addresses[0].city + ", "+ "Pincode : " + widget.addresses[0].pincode,
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
               ),
-              keyboardType: TextInputType.text,
-              cursorColor: new Color(0xffff7100),
-              style: new TextStyle(
-                  color: Colors.black
-              ),
-              controller: _colonyController,
-              onChanged: (value){
+            )
+                :
+            new Container(),
+            Padding(padding: EdgeInsets.only(top: 8.0)),
+            (widget.addresses.length >= 2)
+                ?
+            GestureDetector(
+              onTap: (){
                 setState(() {
-                  _colonyError = false;
+                  _selectedAddress = widget.addresses[1];
+                  _addressError = false;
                 });
               },
-            ),
-            TextField(
-              enabled: false,
-              decoration: InputDecoration(
-                labelText: "City",
-                labelStyle: new TextStyle(
-                    color: Colors.black,
-                    fontWeight: FontWeight.w300
-                ),
-                errorText: "Currently we serve only in Lucknow!",
-                errorStyle: TextStyle(
-                  color: Color(0xffff7100)
-                )
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      border: (_selectedAddress == widget.addresses[1])?
+                      Border.all(color: Color(0xffff7100), width: 2.0)
+                          :Border.all(color: Colors.black, width: 1.0)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.addresses[1].flat + ", " + widget.addresses[1].colony,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 4.0)),
+                        Text(
+                          widget.addresses[1].city + ", "+ "Pincode : " + widget.addresses[1].pincode,
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
               ),
-              keyboardType: TextInputType.text,
-              cursorColor: new Color(0xffff7100),
-              style: new TextStyle(
-                  color: Colors.black
-              ),
-              controller: _cityController,
-              onChanged: (value){
+            )
+                :
+            new Container(),
+            Padding(padding: EdgeInsets.only(top: 8.0)),
+            (widget.addresses.length >= 3)
+                ?
+            GestureDetector(
+              onTap: (){
                 setState(() {
-                  _cityError = false;
+                  _selectedAddress = widget.addresses[2];
+                  _addressError = false;
                 });
               },
-            ),
+              child: Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                      border: (_selectedAddress == widget.addresses[2])?
+                      Border.all(color: Color(0xffff7100), width: 2.0)
+                          :Border.all(color: Colors.black, width: 1.0)
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          widget.addresses[2].flat + ", " + widget.addresses[2].colony,
+                          style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                        Padding(padding: EdgeInsets.only(top: 4.0)),
+                        Text(
+                          widget.addresses[2].city + ", "+ "Pincode : " + widget.addresses[2].pincode,
+                          style: TextStyle(
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: "Roboto"
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
+              ),
+            )
+                :
+            new Container(),
+            (_addressError)?new Text(
+              "Please select an address!",
+              style: TextStyle(
+                color: Colors.red,
+              ),
+            ) : new Container(),
             DateTimePickerFormField(
               format: DateFormat("dd-MM-yyyy"),
               inputType: InputType.date,

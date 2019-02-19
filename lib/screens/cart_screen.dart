@@ -3,7 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:progress_hud/progress_hud.dart';
+import 'package:snipped/models/Address.dart';
 import 'package:snipped/transitions/slide_ltr.dart';
+import 'package:snipped/transitions/slide_rtl.dart';
+import 'package:snipped/widgets/add_address.dart';
 
 import 'home_screen.dart';
 import 'package:snipped/models/Service.dart';
@@ -28,6 +31,8 @@ String _couponErrorText = "";
 ProgressHUD _progressHUD;
 bool _loading = false;
 List<Order> _orders;
+bool _addressLoading = false;
+List<Address> _addresses;
 
 class _CartScreenState extends State<CartScreen> {
   final _scaffoldKey = new GlobalKey<ScaffoldState>();
@@ -36,6 +41,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   void initState() {
     _loading = false;
+    _addressLoading = false;
 
     _progressHUD = new ProgressHUD(
       backgroundColor: Colors.black12,
@@ -83,6 +89,37 @@ class _CartScreenState extends State<CartScreen> {
     return prefs.getString("userPhone") ?? "";
   }
 
+  loadAddresses(){
+    setState(() {
+      _addressLoading = true;
+    });
+    getPhonePreferences()
+        .then((value){
+       getAddresses(value)
+           .then((list){
+          _addresses = list;
+          setState(() {
+            _addressLoading = false;
+          });
+          if(_addresses.isEmpty){
+            Navigator.pushReplacement(
+              context,
+              SlideRTL(widget: AddAddressBottomSheet(phone: value, calledfrom: "cart",))
+            );
+            return;
+          }
+          _showAddressBottomSheet();
+       });
+    });
+  }
+
+  Future<List<Address>> getAddresses(value) async{
+    String url = "http://3.0.235.136:8080/Snipped-0.0.1-SNAPSHOT/address/" + value;
+    var data = await http.get(url);
+    AddressResponse response = AddressResponse.fromJson(json.decode(data.body));
+    return response.addresses;
+  }
+
   void _showAddressBottomSheet() {
     setState(() {
       _showPersBottomSheetCallback = null;
@@ -94,7 +131,7 @@ class _CartScreenState extends State<CartScreen> {
             color: Colors.grey[300],
             height: MediaQuery.of(context).size.height * 0.75,
             child: new AddressBottomSheet(
-                _total, _cartList, _couponController.text),
+                _total, _cartList, _couponController.text, _addresses),
           );
         })
         .closed
@@ -231,6 +268,8 @@ class _CartScreenState extends State<CartScreen> {
         context: context, builder: (BuildContext context) => _deleteDialog);
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
@@ -285,211 +324,225 @@ class _CartScreenState extends State<CartScreen> {
                           builder:
                               (BuildContext context, AsyncSnapshot snapshot) {
                             if (snapshot.hasData) {
-                              return ListView.builder(
-                                itemCount: _cartList.length + 2,
-                                itemBuilder: (BuildContext context, int index) {
-                                  if (index == _cartList.length) {
-                                    return Padding(
-                                      padding: EdgeInsets.all(8.0),
-                                      child: TextField(
-                                        onChanged: (value) {
-                                          _couponError = false;
-                                          _couponErrorText = "";
-                                        },
-                                        enabled: (_couponErrorText ==
-                                                "Coupon applied successfully!")
-                                            ? false
-                                            : true,
-                                        decoration: InputDecoration(
-                                            labelText: "Have a coupon code?",
-                                            border: OutlineInputBorder(),
-                                            focusedBorder: UnderlineInputBorder(),
-                                            errorText: _couponError
-                                                ? _couponErrorText
-                                                : null,
-                                            errorStyle: TextStyle(
-                                                color: Color(0xff073848)),
-                                            suffix: (_discount == 0)
-                                                ? GestureDetector(
-                                                    onTap: () =>
-                                                        _validateCouponCode(),
-                                                    child: Icon(
-                                                      Icons.send,
-                                                      color: Colors.green,
-                                                    ),
-                                                  )
-                                                : new Container(
-                                                    child: GestureDetector(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          _discount = 0;
-                                                          _couponController
-                                                              .text = "";
-                                                          _couponError = true;
-                                                          _couponErrorText =
-                                                              "Coupon removed successfully!";
-                                                        });
-                                                      },
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 8.0, right: 8.0),
+                                child: ListView.builder(
+                                  itemCount: _cartList.length + 2,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    if (index == _cartList.length) {
+                                      return Padding(
+                                        padding: EdgeInsets.all(8.0),
+                                        child: TextField(
+                                          onChanged: (value) {
+                                            _couponError = false;
+                                            _couponErrorText = "";
+                                          },
+                                          enabled: (_couponErrorText ==
+                                                  "Coupon applied successfully!")
+                                              ? false
+                                              : true,
+                                          decoration: InputDecoration(
+                                              labelText: "Have a coupon code?",
+                                              border: OutlineInputBorder(),
+                                              focusedBorder: UnderlineInputBorder(),
+                                              errorText: _couponError
+                                                  ? _couponErrorText
+                                                  : null,
+                                              errorStyle: TextStyle(
+                                                  color: Color(0xff073848)),
+                                              suffix: (_discount == 0)
+                                                  ? GestureDetector(
+                                                      onTap: () =>
+                                                          _validateCouponCode(),
                                                       child: Icon(
-                                                        Icons.clear,
-                                                        color: Colors.red,
+                                                        Icons.send,
+                                                        color: Colors.green,
                                                       ),
-                                                    ),
-                                                  )),
-                                        cursorColor: Color(0xffff7100),
-                                        textCapitalization:
-                                            TextCapitalization.characters,
-                                        controller: _couponController,
-                                      ),
-                                    );
-                                  }
-                                  if (index == _cartList.length + 1) {
-                                    return Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          8.0, 24.0, 8.0, 16.0),
-                                      child: RaisedButton(
-                                        elevation: 0.0,
-                                        color: Color(0xff073848),
-                                        textColor: Colors.white,
-                                        onPressed: _showAddressBottomSheet,
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 12.0, bottom: 12.0),
-                                          child: Text(
-                                            _proceedBtnText,
-                                            style: TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w400),
-                                          ),
+                                                    )
+                                                  : new Container(
+                                                      child: GestureDetector(
+                                                        onTap: () {
+                                                          setState(() {
+                                                            _discount = 0;
+                                                            _couponController
+                                                                .text = "";
+                                                            _couponError = true;
+                                                            _couponErrorText =
+                                                                "Coupon removed successfully!";
+                                                          });
+                                                        },
+                                                        child: Icon(
+                                                          Icons.clear,
+                                                          color: Colors.red,
+                                                        ),
+                                                      ),
+                                                    )),
+                                          cursorColor: Color(0xffff7100),
+                                          textCapitalization:
+                                              TextCapitalization.characters,
+                                          controller: _couponController,
                                         ),
-                                      ),
-                                    );
-                                  }
-                                  if (_cartList
-                                      .contains(snapshot.data[index].id)) {
-                                    return Dismissible(
-                                      key: Key(snapshot.data[index].id),
-                                      background: Container(
-                                        color: Colors.red,
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                            children: <Widget>[
-                                              Icon(Icons.delete_sweep, size: 40.0,),
-                                              Icon(Icons.delete_sweep, size: 40.0,)
-                                            ],
-                                          ),
-                                        )
-                                      ),
-                                      onDismissed: (direction){
-                                        _cartList.remove(snapshot.data[index].id);
-                                        _updateProceedBtnText(snapshot.data);
-                                        _updateCartPreferences();
-                                        Navigator.pushReplacement(
-                                            context, MaterialPageRoute(builder: (context) => CartScreen()));
-                                      },
-                                      child: Column(
-                                        children: <Widget>[
+                                      );
+                                    }
+                                    if (index == _cartList.length + 1) {
+                                      return Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            8.0, 24.0, 8.0, 16.0),
+                                        child: RaisedButton(
+                                          elevation: 0.0,
+                                          color: Color(0xff073848),
+                                          textColor: Colors.white,
+                                          onPressed: (){
+                                            loadAddresses();
+                                          },
+                                          child: (_addressLoading)?
+                                          Padding(
+                                            padding: EdgeInsets.all(12.0),
+                                            child: CircularProgressIndicator(
+                                                valueColor: new AlwaysStoppedAnimation<Color>(
+                                                    Color(0xffff7100))
+                                            ),
+                                          )
+                                              :
                                           Padding(
                                             padding: const EdgeInsets.only(
-                                                top: 4.0, bottom: 4.0, left: 8.0),
+                                                top: 12.0, bottom: 12.0),
+                                            child: Text(
+                                              _proceedBtnText,
+                                              style: TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.w400),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    if (_cartList
+                                        .contains(snapshot.data[index].id)) {
+                                      return Dismissible(
+                                        key: Key(snapshot.data[index].id),
+                                        background: Container(
+                                          color: Colors.red,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16.0),
                                             child: Row(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.spaceBetween,
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: <Widget>[
-                                                    Text(
-                                                      snapshot.data[index].name,
-                                                      style: TextStyle(
-                                                          fontSize: 20.0,
-                                                          fontWeight:
-                                                              FontWeight.w300),
-                                                    ),
-                                                    Text(
-                                                      snapshot.data[index]
-                                                          .subcategory,
-                                                      style: TextStyle(
-                                                          fontSize: 16.0,
-                                                          fontWeight:
-                                                              FontWeight.w200),
-                                                    ),
-                                                    Padding(
-                                                        padding: EdgeInsets.only(
-                                                            top: 4.0)),
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.50,
-                                                      child: Text(
-                                                        snapshot.data[index]
-                                                            .description,
+                                                Icon(Icons.delete_sweep, size: 40.0,),
+                                                Icon(Icons.delete_sweep, size: 40.0,)
+                                              ],
+                                            ),
+                                          )
+                                        ),
+                                        onDismissed: (direction){
+                                          _cartList.remove(snapshot.data[index].id);
+                                          _updateProceedBtnText(snapshot.data);
+                                          _updateCartPreferences();
+                                          Navigator.pushReplacement(
+                                              context, MaterialPageRoute(builder: (context) => CartScreen()));
+                                        },
+                                        child: Column(
+                                          children: <Widget>[
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 4.0, bottom: 4.0, left: 8.0),
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.spaceBetween,
+                                                children: <Widget>[
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.start,
+                                                    children: <Widget>[
+                                                      Text(
+                                                        snapshot.data[index].name,
                                                         style: TextStyle(
-                                                            fontSize: 14.0,
+                                                            fontSize: 20.0,
                                                             fontWeight:
                                                                 FontWeight.w300),
                                                       ),
-                                                    )
-                                                  ],
-                                                ),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.end,
-                                                  children: <Widget>[
-                                                    Row(
-                                                      children: <Widget>[
-                                                        Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                      .only(
-                                                                  right: 4.0),
-                                                          child: Text(
-                                                            "₹" +
-                                                                " " +
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .price
-                                                                    .toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 14.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400),
-                                                            textAlign:
-                                                                TextAlign.right,
-                                                          ),
+                                                      Text(
+                                                        snapshot.data[index]
+                                                            .subcategory,
+                                                        style: TextStyle(
+                                                            fontSize: 16.0,
+                                                            fontWeight:
+                                                                FontWeight.w200),
+                                                      ),
+                                                      Padding(
+                                                          padding: EdgeInsets.only(
+                                                              top: 4.0)),
+                                                      Container(
+                                                        width:
+                                                            MediaQuery.of(context)
+                                                                    .size
+                                                                    .width *
+                                                                0.50,
+                                                        child: Text(
+                                                          snapshot.data[index]
+                                                              .description,
+                                                          style: TextStyle(
+                                                              fontSize: 14.0,
+                                                              fontWeight:
+                                                                  FontWeight.w300),
                                                         ),
-                                                        IconButton(
-                                                          icon:
-                                                              Icon(Icons.delete),
-                                                          color: Colors.red,
-                                                          onPressed: () {
-                                                            _showDeleteConfirmationDialog(
-                                                                snapshot
-                                                                    .data[index]
-                                                                    .id,
-                                                                snapshot.data);
-                                                          },
-                                                        )
-                                                      ],
-                                                    ),
-                                                  ],
-                                                )
-                                              ],
+                                                      )
+                                                    ],
+                                                  ),
+                                                  Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment.end,
+                                                    children: <Widget>[
+                                                      Row(
+                                                        children: <Widget>[
+                                                          Padding(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                        .only(
+                                                                    right: 4.0),
+                                                            child: Text(
+                                                              "₹" +
+                                                                  " " +
+                                                                  snapshot
+                                                                      .data[index]
+                                                                      .price
+                                                                      .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize: 14.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                              textAlign:
+                                                                  TextAlign.right,
+                                                            ),
+                                                          ),
+                                                          IconButton(
+                                                            icon:
+                                                                Icon(Icons.delete),
+                                                            color: Colors.red,
+                                                            onPressed: () {
+                                                              _showDeleteConfirmationDialog(
+                                                                  snapshot
+                                                                      .data[index]
+                                                                      .id,
+                                                                  snapshot.data);
+                                                            },
+                                                          )
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  )
+                                                ],
+                                              ),
                                             ),
-                                          ),
-                                          new Divider()
-                                        ],
-                                      ),
-                                    );
-                                  }
-                                },
+                                            new Divider()
+                                          ],
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
                               );
                             } else if (snapshot.hasError) {
                               return new Center(
